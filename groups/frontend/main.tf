@@ -14,7 +14,7 @@ module "frontend" {
   ami_version_pattern = var.ami_version_pattern
   application_subnets = values(data.terraform_remote_state.management_vpc.outputs.management_private_subnet_ids)
   environment         = var.environment
-  instance_hostname   = var.instance_hostname
+  instance_hostname   = "frontend-tuxedo.${var.environment}"
   instance_type       = var.instance_type
   lb_subnet_cidrs     = values(data.terraform_remote_state.management_vpc.outputs.management_private_subnet_cidrs)
   lb_subnet_ids       = values(data.terraform_remote_state.management_vpc.outputs.management_private_subnet_ids)

@@ -9,11 +9,6 @@ variable "environment" {
   description = "The environment name to be used when creating AWS resources"
 }
 
-variable "instance_hostname" {
-  type        = string
-  description = "The hostname to set for the instance"
-}
-
 variable "instance_type" {
   type        = string
   description = "The instance type to use"
