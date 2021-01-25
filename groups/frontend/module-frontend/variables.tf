@@ -8,6 +8,16 @@ variable "application_subnets" {
   description = "The application subnets in which to create resources"
 }
 
+variable "common_resource_name" {
+  type        = string
+  description = "A string defining the common resource name to be applied to all applicable resources"
+}
+
+variable "common_tags" {
+  type        = map(string)
+  description = "A map of common tags to associate with resources"
+}
+
 variable "dns_zone" {
   type        = string
   description = "The DNS zone used when creating records"
@@ -19,6 +29,11 @@ variable "environment" {
   description = "The environment name to be used when creating AWS resources"
 }
 
+variable "instance_count" {
+  type        = number
+  description = "The number of instances to create"
+}
+
 variable "instance_hostname" {
   type        = string
   description = "The hostname to set for the instance"
@@ -27,6 +42,11 @@ variable "instance_hostname" {
 variable "instance_type" {
   type        = string
   description = "The instance type to use"
+}
+
+variable "lb_deletion_protection" {
+  type        = bool
+  description = "A boolean value representing whether to enable load balancer deletion protection"
 }
 
 variable "lb_subnet_ids" {
@@ -72,6 +92,11 @@ variable "ssh_cidrs" {
 variable "ssh_keyname" {
   type        = string
   description = "The SSH keypair name to use for remote connectivity"
+}
+
+variable "tuxedo_services" {
+  type        = map(map(number))
+  description = "A map whose keys represent server-side tuxedo server groups, with nested maps representing individual services by name and port number."
 }
 
 variable "vpc_id" {

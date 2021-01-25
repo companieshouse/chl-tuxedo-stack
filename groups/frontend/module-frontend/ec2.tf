@@ -1,56 +1,6 @@
-
-resource "aws_autoscaling_attachment" "asg_attachment_bar" {
-  autoscaling_group_name = aws_autoscaling_group.frontend.id
-  elb                    = aws_lb.frontend.id
-}
-
 resource "aws_placement_group" "frontend" {
-  name     = "${var.service_subtype}-${var.service}-${var.environment}-pg"
+  name     = var.common_resource_name
   strategy = "spread"
-}
-
-locals {
-  instance_tags = {
-    Name           = "${var.service_subtype}-${var.service}-${var.environment}"
-    Environment    = var.environment
-    Service        = var.service
-    ServiceSubType = var.service_subtype
-  }
-}
-
-data "null_data_source" "instance_tags" {
-  count = length(keys(local.instance_tags))
-  inputs = {
-    key                 = element(keys(local.instance_tags), count.index)
-    value               = element(values(local.instance_tags), count.index)
-    propagate_at_launch = "true"
-  }
-}
-
-resource "aws_autoscaling_group" "frontend" {
-  name = "${var.service_subtype}-${var.service}-${var.environment}-asg"
-
-  # TODO introduce variables
-  max_size         = 1
-  min_size         = 1
-  desired_capacity = 1
-
-  # TODO health checks
-
-  launch_configuration = aws_launch_configuration.frontend.name
-  placement_group      = aws_placement_group.frontend.id
-  vpc_zone_identifier  = var.application_subnets
-
-  lifecycle {
-    ignore_changes = [
-      load_balancers,
-      target_group_arns
-    ]
-  }
-
-  # TODO user-data for application and config deployment
-
-  tags = data.null_data_source.instance_tags.*.outputs
 }
 
 data "aws_ami" "chl_tuxedo" {
@@ -64,12 +14,14 @@ data "aws_ami" "chl_tuxedo" {
   }
 }
 
-resource "aws_launch_configuration" "frontend" {
-  name_prefix     = "${var.service_subtype}-${var.service}-${var.environment}-"
-  image_id        = data.aws_ami.chl_tuxedo.id
+resource "aws_instance" "frontend" {
+  count           = var.instance_count
+
+  ami             = data.aws_ami.chl_tuxedo.id
   instance_type   = var.instance_type
   key_name        = var.ssh_keyname
   security_groups = [aws_security_group.frontend.id]
+  placement_group = aws_placement_group.frontend.id
 
   dynamic "ebs_block_device" {
     for_each = [
@@ -87,16 +39,12 @@ resource "aws_launch_configuration" "frontend" {
     }
   }
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  # TODO userdata for cloud-init configuration for tux install/configure/startup after new instance creation
-  # TODO lifecycle hooks for state change alerts
+  tags        = var.common_tags
+  volume_tags = var.common_tags
 }
 
 resource "aws_security_group" "frontend" {
-  name   = "${var.service_subtype}-${var.service}-${var.environment}-sg"
+  name   = var.common_resource_name
   vpc_id = var.vpc_id
 
   # TODO inbound traffic to applications from ELB
@@ -117,10 +65,5 @@ resource "aws_security_group" "frontend" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name           = "${var.service_subtype}-${var.service}-${var.environment}-sg"
-    Environment    = var.environment
-    Service        = var.service
-    ServiceSubType = var.service_subtype
-  }
+  tags = var.common_tags
 }
