@@ -42,21 +42,17 @@ resource "aws_lb_target_group" "frontend" {
     for service in local.tuxedo_services : "${service.tuxedo_service_key}.${service.tuxedo_server_type_key}" => service
   }
 
-  name        = var.common_resource_name
+  name        = "${each.value.tuxedo_service_key}-${each.value.tuxedo_server_type_key}-${var.common_resource_name}"
   vpc_id      = var.vpc_id
   port        = each.value.tuxedo_service_port
   protocol    = "TCP"
   target_type = "instance"
-  # deregistration_delay = 10
 
-  # Defaults to port 'traffic-port' and type 'TCP' meaning same port as LB
   health_check {
     interval            = "30"
-    # port                = "80"  use default of 'traffic-port'
-    # protocol = "TCP" this is default so no need to specify
+    protocol            = "TCP"
     healthy_threshold   = "3"
     unhealthy_threshold = "3"
-    timeout             = "5"
   }
 
   tags = merge(var.common_tags, {
@@ -75,5 +71,5 @@ resource "aws_lb_target_group_attachment" "frontend" {
   }
 
   target_group_arn = aws_lb_target_group.frontend[each.value.tuxedo_service_key].arn
-  target_id        = aws_instance.frontend[each.value.instance_index].arn
+  target_id        = aws_instance.frontend[each.value.instance_index].id
 }

@@ -12,7 +12,7 @@ variable "environment" {
 variable "instance_count" {
   type        = number
   description = "The number of instances to create"
-  default     = 3
+  default     = 1
 }
 
 variable "instance_type" {
@@ -57,7 +57,7 @@ variable "service_subtype" {
 
 variable "tuxedo_services" {
   type        = map(map(number))
-  description = "A map whose keys represent server-side tuxedo server groups, with nested maps representing individual services by name and port number."
+  description = "A map whose keys represent server-side tuxedo server groups with nested maps representing individual services by name key and port number value"
   default = {
     ceu = {
       ch  = 5000,

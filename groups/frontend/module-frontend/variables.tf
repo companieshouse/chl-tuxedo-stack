@@ -44,6 +44,11 @@ variable "instance_type" {
   description = "The instance type to use"
 }
 
+variable "internal_access_cidrs" {
+  type        = list(string)
+  description = "A list of subnet CIDR ranges to grant access to the Tuxedo applications via the load balancer"
+}
+
 variable "lb_deletion_protection" {
   type        = bool
   description = "A boolean value representing whether to enable load balancer deletion protection"
@@ -96,7 +101,7 @@ variable "ssh_keyname" {
 
 variable "tuxedo_services" {
   type        = map(map(number))
-  description = "A map whose keys represent server-side tuxedo server groups, with nested maps representing individual services by name and port number."
+  description = "A map whose keys represent server-side tuxedo server groups with nested maps representing individual services by name key and port number value"
 }
 
 variable "vpc_id" {

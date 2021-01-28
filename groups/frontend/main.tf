@@ -19,6 +19,7 @@ module "frontend" {
   instance_hostname      = "frontend-tuxedo.${var.environment}"
   instance_count         = var.instance_count
   instance_type          = var.instance_type
+  internal_access_cidrs  = concat(values(data.terraform_remote_state.management_vpc.outputs.vpn_cidrs), values(data.terraform_remote_state.management_vpc.outputs.internal_cidrs))
   lb_deletion_protection = var.lb_deletion_protection
   lb_subnet_cidrs        = values(data.terraform_remote_state.management_vpc.outputs.management_private_subnet_cidrs)
   lb_subnet_ids          = values(data.terraform_remote_state.management_vpc.outputs.management_private_subnet_ids)
