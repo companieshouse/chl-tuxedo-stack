@@ -10,14 +10,14 @@ data "template_cloudinit_config" "config" {
   part {
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/cloud-init/templates/system-config.yml.tpl", {
-      instance_hostname = var.instance_hostname
+      instance_hostname = local.instance_hostname
     })
   }
 
   part {
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/cloud-init/templates/bootstrap-commands.yml.tpl", {
-      instance_hostname = var.instance_hostname
+      instance_hostname = local.instance_hostname
       lvm_block_devices = var.lvm_block_devices
     })
   }

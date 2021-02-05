@@ -1,7 +1,24 @@
+variable "ami_owner_id" {
+  type        = string
+  description = "The AMI owner ID"
+}
+
 variable "ami_version_pattern" {
   type        = string
-  description = "The pattern to match AMI version to"
+  description = "The pattern to use when filtering for AMI version by name"
   default     = "*"
+}
+
+variable "application_subnet_pattern" {
+  type        = string
+  description = "The pattern to use when filtering for VPC subnets by 'Name' tag"
+  default     = "sub-application-*"
+}
+
+variable "dns_zone_suffix" {
+  type        = string
+  description = "The common DNS hosted zone suffix used across accounts"
+  default     = "heritage.aws.internal"
 }
 
 variable "environment" {
@@ -88,6 +105,12 @@ variable "tuxedo_services" {
       sameas = 3007,
     },
   }
+}
+
+# TODO read from Vault
+variable "ssh_cidrs" {
+  type        = list(string)
+  description = "A list of strings representing CIDR ranges from which SSH connections are permitted to EC2 instances"
 }
 
 variable "ssh_keyname" {

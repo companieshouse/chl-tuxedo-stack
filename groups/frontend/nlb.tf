@@ -1,25 +1,29 @@
+data "aws_network_interface" "nlb" {
+  for_each = data.aws_subnet_ids.application.ids
+
+  filter {
+    name   = "description"
+    values = ["ELB ${aws_lb.frontend.arn_suffix}"]
+  }
+
+  filter {
+    name   = "subnet-id"
+    values = [each.value]
+  }
+}
+
 resource "aws_lb" "frontend" {
-  name               = var.common_resource_name
+  name               = local.common_resource_name
   internal           = true
   load_balancer_type = "network"
-  subnets            = var.lb_subnet_ids
+  subnets            = data.aws_subnet_ids.application.ids
 
   enable_cross_zone_load_balancing = true
   enable_deletion_protection       = var.lb_deletion_protection
 
-  tags = var.common_tags
-}
-
-locals {
-  tuxedo_services = flatten([
-    for tuxedo_server_type_key, tuxedo_services in var.tuxedo_services : [
-      for tuxedo_service_key, tuxedo_service_port in tuxedo_services : {
-        tuxedo_server_type_key = tuxedo_server_type_key
-        tuxedo_service_key     = tuxedo_service_key
-        tuxedo_service_port    = tuxedo_service_port
-      }
-    ]
-  ])
+  tags = merge(local.common_tags, {
+    Name = local.common_resource_name
+  })
 }
 
 resource "aws_lb_listener" "frontend" {
@@ -42,11 +46,11 @@ resource "aws_lb_target_group" "frontend" {
     for service in local.tuxedo_services : "${service.tuxedo_service_key}.${service.tuxedo_server_type_key}" => service
   }
 
-  name        = "${each.value.tuxedo_service_key}-${each.value.tuxedo_server_type_key}-${var.common_resource_name}"
-  vpc_id      = var.vpc_id
+  name        = "${each.value.tuxedo_service_key}-${each.value.tuxedo_server_type_key}-${var.service}-${var.environment}"
   port        = each.value.tuxedo_service_port
   protocol    = "TCP"
   target_type = "instance"
+  vpc_id      = data.aws_vpc.heritage.id
 
   health_check {
     interval            = "30"
@@ -55,9 +59,10 @@ resource "aws_lb_target_group" "frontend" {
     unhealthy_threshold = "3"
   }
 
-  tags = merge(var.common_tags, {
-    TuxedoServerType = "${each.value.tuxedo_server_type_key}",
-    TuxedoService    = "${each.value.tuxedo_service_key}",
+  tags = merge(local.common_tags, {
+    Name             = "${each.value.tuxedo_service_key}-${each.value.tuxedo_server_type_key}-${var.service}-${var.environment}"
+    TuxedoServerType = each.value.tuxedo_server_type_key,
+    TuxedoClientType = each.value.tuxedo_service_key,
   })
 }
 
@@ -70,6 +75,6 @@ resource "aws_lb_target_group_attachment" "frontend" {
     }
   }
 
-  target_group_arn = aws_lb_target_group.frontend[each.value.tuxedo_service_key].arn
   target_id        = aws_instance.frontend[each.value.instance_index].id
+  target_group_arn = aws_lb_target_group.frontend[each.value.tuxedo_service_key].arn
 }

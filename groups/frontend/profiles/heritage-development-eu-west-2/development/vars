@@ -1,4 +1,4 @@
-environment = "cidev"
+environment = "development"
 
 lvm_block_devices = [{
   aws_volume_size_gb = "1",
@@ -6,6 +6,3 @@ lvm_block_devices = [{
   lvm_logical_volume_device_node = "",
   lvm_physical_volume_device_node = "/dev/xvdb"
 }]
-
-# TODO setup suitable key for this use case
-ssh_keyname = "ais-test-instances"
