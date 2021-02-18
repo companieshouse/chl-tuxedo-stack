@@ -1,8 +1,1 @@
 environment = "development"
-
-lvm_block_devices = [{
-  aws_volume_size_gb = "1",
-  filesystem_resize_tool = "",
-  lvm_logical_volume_device_node = "",
-  lvm_physical_volume_device_node = "/dev/xvdb"
-}]
