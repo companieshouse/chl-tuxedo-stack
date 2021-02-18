@@ -94,8 +94,8 @@ resource "aws_instance" "frontend" {
   key_name        = var.ssh_keyname
   placement_group = aws_placement_group.frontend.id
   subnet_id       = element(local.application_subnet_ids_by_az, count.index) # use 'element' function for wrap-around behaviour
-  
-  user_data_base64       = "${data.template_cloudinit_config.config.rendered}"
+
+  user_data_base64       = data.template_cloudinit_config.config.rendered
   vpc_security_group_ids = concat([aws_security_group.common.id], [for k, v in aws_security_group.services : v.id])
 
   dynamic "ebs_block_device" {
