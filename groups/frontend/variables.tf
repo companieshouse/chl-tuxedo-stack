@@ -113,6 +113,11 @@ variable "ssh_cidrs" {
   description = "A list of strings representing CIDR ranges from which SSH connections are permitted to EC2 instances"
 }
 
+variable "ssh_master_public_key" {
+  type        = string
+  description = "The SSH master public key; EC2 instance connect should be used for regular connectivity"
+}
+
 variable "ssh_keyname" {
   type        = string
   description = "The SSH keypair name to use for remote connectivity"

@@ -35,6 +35,11 @@ resource "aws_placement_group" "frontend" {
   strategy = "spread"
 }
 
+resource "aws_key_pair" "master" {
+  key_name   = "${local.common_resource_name}-master"
+  public_key = var.ssh_master_public_key
+}
+
 # Individual security groups for Tuxedo server types (i.e. ceu, chd, ewf, xml)
 resource "aws_security_group" "services" {
   for_each = var.tuxedo_services
@@ -91,7 +96,7 @@ resource "aws_instance" "frontend" {
 
   ami             = data.aws_ami.chl_tuxedo.id
   instance_type   = var.instance_type
-  key_name        = var.ssh_keyname
+  key_name        = aws_key_pair.master.id
   placement_group = aws_placement_group.frontend.id
   subnet_id       = element(local.application_subnet_ids_by_az, count.index) # use 'element' function for wrap-around behaviour
 
