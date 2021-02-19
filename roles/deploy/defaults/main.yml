@@ -1,0 +1,11 @@
+---
+
+tuxedo_service_group: tuxedo
+tuxedo_service_users:
+  - ceu
+  - chd
+  - ewf
+  - xml
+
+deployment_dir: deployment
+rollback_dir: rollback

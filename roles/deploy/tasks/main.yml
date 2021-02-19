@@ -1,0 +1,58 @@
+---
+
+- assert:
+    that:
+      - application_artefact_path is defined and application_artefact_path | trim | length > 0
+      - application_configs_path is defined and application_configs_path | trim | length > 0
+    msg: "Required variable is empty or undefined"
+
+- name: Create temporary directory for application artefact files
+  tempfile:
+    state: directory
+  register: application_artefact_files
+
+- name: Create temporary directory for config artefact files
+  tempfile:
+    state: directory
+  register: application_config_files
+
+- name: Set permissions to allow service users to read from temporary directory
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: "{{ tuxedo_service_group }}"
+    mode: 0755
+  loop:
+    -  "{{ application_artefact_files.path }}"
+    -  "{{ application_config_files.path }}"
+
+- name: Deploy and extract application arterfact
+  unarchive:
+    src: "{{ application_artefact_path }}"
+    dest: "{{ application_artefact_files.path }}"
+    remote_src: no
+    owner: root
+    group: "{{ tuxedo_service_group }}"
+    mode: 0755
+
+- name: Deploy and extract application config files
+  unarchive:
+    src: "{{ application_configs_path }}"
+    dest: "{{ application_config_files.path }}"
+    remote_src: no
+    owner: root
+    group: "{{ tuxedo_service_group }}"
+    mode: 0755
+
+- include_tasks: deploy.yml
+  loop: "{{ tuxedo_service_users }}"
+  loop_control:
+    loop_var: tuxedo_user
+
+- name: Remove temporary directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ application_artefact_files.path }}"
+    - "{{ application_config_files.path }}"

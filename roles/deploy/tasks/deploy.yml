@@ -1,0 +1,65 @@
+---
+
+- name: Create temporary directory for new {{ tuxedo_user }} deployment
+  become_user: "{{ tuxedo_user }}"
+  tempfile:
+    state: directory
+  register: new_deployment_files
+
+- name: Copy application artefact files to temporary {{ tuxedo_user }} deployment directory
+  command: "cp -r {{ application_artefact_files.path }}/. {{ new_deployment_files.path }}"
+
+- name: Ensure no config directory exists from extracted application artefact
+  file:
+    path: "{{ new_deployment_files.path }}/config"
+    state: absent
+
+- name: Create empty config directory
+  become_user: "{{ tuxedo_user }}"
+  file:
+    path: "{{ new_deployment_files.path }}/config"
+    state: directory
+
+- name: Copy application config files to temporary {{ tuxedo_user }} deployment directory
+  become_user: "{{ tuxedo_user }}"
+  command: "cp -r {{ application_config_files.path }}/{{ tuxedo_user }}/. {{ new_deployment_files.path }}/config"
+
+- name: Set permissions for new deployment files
+  file:
+    path: "{{ new_deployment_files.path }}"
+    owner: "{{ tuxedo_user }}"
+    group: "{{ tuxedo_user }}"
+    recurse: yes
+
+- name: Stop ngSrv services
+  become_user: "{{ tuxedo_user }}"
+  # shell: ngsrv.sh stop
+  shell: echo "UNIMPLEMENTED"
+  args:
+    executable: /bin/bash
+
+- name: Clear IPC facilities
+  become_user: "{{ tuxedo_user }}"
+  # shell: zapipc
+  shell: echo "UNIMPLEMENTED"
+  args:
+    executable: /bin/bash
+
+- name: Remove {{ tuxedo_user }} rollback directory if present
+  file:
+    path: "/home/{{ tuxedo_user }}/{{ rollback_dir }}"
+    state: absent
+
+- name: Check state of {{ tuxedo_user }} current deployment directory
+  stat:
+    path: "/home/{{ tuxedo_user }}/{{ deployment_dir }}"
+  register: current_deployment_files
+
+- name: Backup {{ tuxedo_user }} current deployment directory if one exists
+  become_user: "{{ tuxedo_user }}"
+  command: "mv /home/{{ tuxedo_user }}/{{ deployment_dir }} /home/{{ tuxedo_user }}/{{ rollback_dir }}"
+  when: current_deployment_files.stat.exists
+
+- name: Install new deployment files
+  become_user: "{{ tuxedo_user }}"
+  command: "mv {{ new_deployment_files.path }} /home/{{ tuxedo_user }}/{{ deployment_dir }}"
