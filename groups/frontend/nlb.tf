@@ -59,6 +59,10 @@ resource "aws_lb_target_group" "frontend" {
     unhealthy_threshold = "3"
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = merge(local.common_tags, {
     Name             = "${each.value.tuxedo_service_key}-${each.value.tuxedo_server_type_key}-${var.service}-${var.environment}"
     TuxedoServerType = each.value.tuxedo_server_type_key,
