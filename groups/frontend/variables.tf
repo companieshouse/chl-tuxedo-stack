@@ -87,12 +87,14 @@ variable "tuxedo_services" {
       orc = 4002,
     },
     ewf = {
-      stem  = 2000,
-      auth  = 2001,
-      orc   = 2002,
-      adobe = 2003,
-      ixbrl = 2004,
-      tnep  = 2005,
+      ois    = 2000,
+      orc    = 2001,
+      ewf    = 2002,
+      chips  = 2003,
+      ixbrl  = 2004
+      tnep   = 2005,
+      trans  = 2006,
+      sameas = 2007,
     },
     xml = {
       ois    = 3000,
