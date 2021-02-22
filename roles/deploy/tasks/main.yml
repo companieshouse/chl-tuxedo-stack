@@ -4,6 +4,7 @@
     that:
       - application_artefact_path is defined and application_artefact_path | trim | length > 0
       - application_configs_path is defined and application_configs_path | trim | length > 0
+      - snmp_host_address is defined and snmp_host_address | trim | length > 0
     msg: "Required variable is empty or undefined"
 
 - name: Create temporary directory for application artefact files
