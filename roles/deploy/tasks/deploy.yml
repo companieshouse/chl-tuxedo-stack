@@ -1,94 +1,213 @@
 ---
 
-- name: Create temporary directory for new {{ tuxedo_user }} deployment
+- name: "{{ tuxedo_user }} : Create temporary directory for new {{ tuxedo_user }} deployment"
   become_user: "{{ tuxedo_user }}"
   tempfile:
     state: directory
   register: new_deployment_files
 
-- name: Copy application artefact files to temporary {{ tuxedo_user }} deployment directory
+- name: "{{ tuxedo_user }} : Copy application artefact files to temporary {{ tuxedo_user }} deployment directory"
   command: "cp -r {{ application_artefact_files.path }}/. {{ new_deployment_files.path }}"
 
-- name: Ensure no config directory exists from extracted application artefact
+- name: "{{ tuxedo_user }} : Ensure no config directory exists from extracted application artefact"
   file:
     path: "{{ new_deployment_files.path }}/config"
     state: absent
 
-- name: Create empty config directory
+- name: "{{ tuxedo_user }} : Create empty config directory"
   become_user: "{{ tuxedo_user }}"
   file:
     path: "{{ new_deployment_files.path }}/config"
     state: directory
 
-- name: Copy application config files to temporary {{ tuxedo_user }} deployment directory
+- name: "{{ tuxedo_user }} : Copy application config files to temporary {{ tuxedo_user }} deployment directory"
   become_user: "{{ tuxedo_user }}"
   command: "cp -r {{ application_config_files.path }}/{{ tuxedo_user }}/. {{ new_deployment_files.path }}/config"
 
-- name: Find nGsrv config files
+- name: "{{ tuxedo_user }} : Create empty log directory"
+  file:
+    path: "{{ new_deployment_files.path }}/logdir"
+    owner: "{{ tuxedo_user }}"
+    group: "{{ tuxedo_user }}"
+    mode: 0755
+    state: directory
+
+- name: "{{ tuxedo_user }} : Find nGsrv config files"
   find:
     paths: "{{ new_deployment_files.path }}/config"
     patterns: "ngsrv.params*"
     recurse: yes
   register: ngsrv_configs
 
-- assert:
+- name: "{{ tuxedo_user }} : Assert nGsrv config files found"
+  assert:
     that:
       - ngsrv_configs.files | length > 0
     msg: "nGsrv configs must exist for placeholder values to be replaced"
 
-# We expect the 'inventory_hostname' variable to be set to the private IPv4
-# address of the instance (i.e. hostnames: private-ip-address is present
-# in the dynamic inventory configuration file)
-- name: Set private IPv4 host address in nGsrv configs
+# We assume 'inventory_hostname' is set to the private IPv4 address of the
+# instance (i.e. 'hostnames: private-ip-address' is present in the dynamic
+# inventory configuration file
+inventory configuration file)
+- name: "{{ tuxedo_user }} : Set private IPv4 host address in nGsrv configs"
   replace:
     path: "{{ item.path }}"
     regexp: '^(?P<addr_env_var>ADDR=)<private-host-address>'
     replace: '\g<addr_env_var>{{ inventory_hostname }}'
   loop: "{{ ngsrv_configs.files }}"
 
-- name: Set SNMP host address in nGsrv config files
+- name: "{{ tuxedo_user }} : Set SNMP host address in nGsrv config files"
   replace:
     path: "{{ item.path }}"
     regexp: '^(?P<snmp_env_var>SNMPMGR=)<snmp-host-address>'
     replace: '\g<snmp_env_var>{{ snmp_host_address }}'
   loop: "{{ ngsrv_configs.files }}"
 
-- name: Set permissions for new deployment files
+- name: "{{ tuxedo_user }} : Set machine name in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/ubbconfig"
+    regexp: '<tuxedo_machine_name>'
+    replace: '{{ tuxedo_machine_name }}'
+
+- name: "{{ tuxedo_user }} : Set logical machine identifier in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/ubbconfig"
+    regexp: '<tuxedo_logical_machine_id>'
+    replace: '{{ tuxedo_user | upper }}_{{ tuxedo_logical_machine_id_suffix }}'
+
+- name: "{{ tuxedo_user }} : Set domain identifier in Tuxedo configs"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/{{ item }}"
+    regexp: '<tuxedo_domain_id>'
+    replace: '{{ tuxedo_user | upper }}_{{ tuxedo_domain_id_suffix }}'
+  loop:
+    - ubbconfig
+    - dmconfig
+
+- name: "{{ tuxedo_user }} : Set local domain identifier in Tuxedo configs"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/dmconfig"
+    regexp: '<tuxedo_local_domain_id>'
+    replace: '{{ tuxedo_user | upper }}_{{ tuxedo_local_domain_suffix }}'
+
+- name: "{{ tuxedo_user }} : Set private IPv4 host address in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/dmconfig"
+    regexp: '<private-host-address>'
+    replace: '{{ inventory_hostname }}'
+
+- name: "{{ tuxedo_user }} : Set local domain port in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/dmconfig"
+    regexp: '<private-host-local-domain-port>'
+    replace: '{{ tuxedo_service_config[tuxedo_user].local_domain_port }}'
+
+- name: "{{ tuxedo_user }} : Set IPC key in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/ubbconfig"
+    regexp: '<tuxedo_ipc_key>'
+    replace: '{{ tuxedo_service_config[tuxedo_user].ipc_key }}'
+
+# TODO tuxedo config DB password (need to feed in as variable so add to pipeline and check upfront for value)
+
+- name: "{{ tuxedo_user }} : Set permissions for new deployment files"
   file:
     path: "{{ new_deployment_files.path }}"
     owner: "{{ tuxedo_user }}"
     group: "{{ tuxedo_user }}"
     recurse: yes
 
-- name: Stop ngSrv services
+- name: "{{ tuxedo_user }} : Stop ngSrv services"
   become_user: "{{ tuxedo_user }}"
-  # shell: ngsrv.sh stop
-  shell: echo "UNIMPLEMENTED"
+  shell: "source $HOME/deployment/config/envfile && ngsrv.sh stop"
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+- name: "{{ tuxedo_user }} : Stop Tuxedo services"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && tmshutdown -y"
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+- name: "{{ tuxedo_user }} : Clear IPC facilities"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && zapipc"
   args:
     executable: /bin/bash
 
-- name: Clear IPC facilities
-  become_user: "{{ tuxedo_user }}"
-  # shell: zapipc
-  shell: echo "UNIMPLEMENTED"
-  args:
-    executable: /bin/bash
-
-- name: Remove {{ tuxedo_user }} rollback directory if present
+- name: "{{ tuxedo_user }} : Remove {{ tuxedo_user }} rollback directory if present"
   file:
     path: "/home/{{ tuxedo_user }}/{{ rollback_dir }}"
     state: absent
 
-- name: Check state of {{ tuxedo_user }} current deployment directory
+- name: "{{ tuxedo_user }} : Check state of {{ tuxedo_user }} current deployment directory"
   stat:
     path: "/home/{{ tuxedo_user }}/{{ deployment_dir }}"
   register: current_deployment_files
 
-- name: Backup {{ tuxedo_user }} current deployment directory if one exists
+- name: "{{ tuxedo_user }} : Backup {{ tuxedo_user }} current deployment directory if one exists"
   become_user: "{{ tuxedo_user }}"
   command: "mv /home/{{ tuxedo_user }}/{{ deployment_dir }} /home/{{ tuxedo_user }}/{{ rollback_dir }}"
   when: current_deployment_files.stat.exists
 
-- name: Install new deployment files
+- name: "{{ tuxedo_user }} : Install new deployment files"
   become_user: "{{ tuxedo_user }}"
   command: "mv {{ new_deployment_files.path }} /home/{{ tuxedo_user }}/{{ deployment_dir }}"
+
+- name: "{{ tuxedo_user }} : Lint Tuxedo ubbconfig file after variable population"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && tmloadcf -n ubbconfig"
+  args:
+    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    executable: /bin/bash
+  register: ubbconfig_lint
+
+- name: "{{ tuxedo_user }} : Assert Tuxedo ubbconfig lint success"
+  assert:
+    that:
+      - ubbconfig_lint.rc == 0
+    fail_msg: "Tuxedo ubbconfig file failed lint check"
+    success_msg: "Tuxedo ubbconfig file passed lint check"
+
+- name: "{{ tuxedo_user }} : Generate Tuxedo binary tuxconfig file"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && tmloadcf -y ubbconfig"
+  args:
+    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    executable: /bin/bash
+
+- name: "{{ tuxedo_user }} : Lint Tuxedo dmconfig file after variable population"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && dmloadcf -n dmconfig"
+  args:
+    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    executable: /bin/bash
+  register: dmconfig_lint
+
+- name: "{{ tuxedo_user }} : Assert Tuxedo dmconfig lint success"
+  assert:
+    that:
+      - dmconfig_lint.rc == 0
+    fail_msg: "Tuxedo dmconfig file failed lint check"
+    success_msg: "Tuxedo dmconfig file passed lint check"
+
+- name: "{{ tuxedo_user }} : Generate Tuxedo binary bdmconfig file"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && dmloadcf -y dmconfig"
+  args:
+    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    executable: /bin/bash
+
+- name: "{{ tuxedo_user }} : Start Tuxedo services"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && tmboot -y"
+  args:
+    executable: /bin/bash
+
+- name: "{{ tuxedo_user }} : Start ngSrv services"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && ngsrv.sh start"
+  args:
+    executable: /bin/bash

@@ -1,6 +1,30 @@
 ---
 
-- assert:
+# We setup variable suffixes here for populating Tuxedo configs; the general
+# format used for the domain id, machine id and local domain suffixes is:
+#   <SERVICE>_INSTANCE_<INSTANCE_INDEX>_<ENV>_<TUX_VAR_TYPE>
+#
+# Note the 'service' prefix is added later, in 'deploy.yml', when this context
+# is available; there is a 30 character maximum for these Tuxedo config values
+#
+# The hostname is assumed to be in the format: i<instance-index>-frontend-tuxedo-<environment>
+- set_fact:
+     tuxedo_machine_name: "{{ ansible_facts.hostname }}"
+     tuxedo_domain_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_DOM') | upper }}"
+     tuxedo_logical_machine_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_SRV') | upper }}"
+     tuxedo_local_domain_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_LOD') | upper }}"
+
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: "{{ item }}"
+  loop:
+    - tuxedo_machine_name
+    - tuxedo_domain_id_suffix
+    - tuxedo_logical_machine_id_suffix
+    - tuxedo_local_domain_suffix
+
+- name: Check required variables are set
+  assert:
     that:
       - application_artefact_path is defined and application_artefact_path | trim | length > 0
       - application_configs_path is defined and application_configs_path | trim | length > 0

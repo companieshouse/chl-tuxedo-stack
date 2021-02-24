@@ -7,5 +7,24 @@ tuxedo_service_users:
   - ewf
   - xml
 
+tuxedo_service_ipc_key_start: 48000
+tuxedo_service_ipc_key_increment: 100
+tuxedo_service_domain_port_start: 38000
+tuxedo_service_domain_port_increment: 100
+
+tuxedo_service_config:
+  ceu:
+    ipc_key: "{{ tuxedo_service_ipc_key_start + (0 * tuxedo_service_ipc_key_increment) | int }}"
+    local_domain_port: "{{ tuxedo_service_domain_port_start + (0 * tuxedo_service_domain_port_increment) | int }}"
+  chd:
+    ipc_key: "{{ tuxedo_service_ipc_key_start + (1 * tuxedo_service_ipc_key_increment) | int }}"
+    local_domain_port: "{{ tuxedo_service_domain_port_start + (1 * tuxedo_service_domain_port_increment) | int }}"
+  ewf:
+    ipc_key: "{{ tuxedo_service_ipc_key_start + (2 * tuxedo_service_ipc_key_increment) | int }}"
+    local_domain_port: "{{ tuxedo_service_domain_port_start + (2 * tuxedo_service_domain_port_increment) | int }}"
+  xml:
+    ipc_key: "{{ tuxedo_service_ipc_key_start + (3 * tuxedo_service_ipc_key_increment) | int }}"
+    local_domain_port: "{{ tuxedo_service_domain_port_start + (3 * tuxedo_service_domain_port_increment) | int }}"
+
 deployment_dir: deployment
 rollback_dir: rollback
