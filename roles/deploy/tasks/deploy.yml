@@ -48,7 +48,6 @@
 # We assume 'inventory_hostname' is set to the private IPv4 address of the
 # instance (i.e. 'hostnames: private-ip-address' is present in the dynamic
 # inventory configuration file
-inventory configuration file)
 - name: "{{ tuxedo_user }} : Set private IPv4 host address in nGsrv configs"
   replace:
     path: "{{ item.path }}"
