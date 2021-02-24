@@ -18,7 +18,7 @@ variable "application_subnet_pattern" {
 variable "dns_zone_suffix" {
   type        = string
   description = "The common DNS hosted zone suffix used across accounts"
-  default     = "heritage.aws.internal"
+  default     = "development.heritage.aws.internal"
 }
 
 variable "environment" {

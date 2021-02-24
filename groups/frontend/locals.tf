@@ -10,8 +10,6 @@ locals {
 
   common_resource_name = "${var.service_subtype}-${var.service}-${var.environment}"
 
-  instance_hostname    = "${var.service_subtype}-${var.service}-${var.environment}"
-
   tuxedo_services = flatten([
     for tuxedo_server_type_key, tuxedo_services in var.tuxedo_services : [
       for tuxedo_service_key, tuxedo_service_port in tuxedo_services : {

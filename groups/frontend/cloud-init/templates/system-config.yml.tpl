@@ -1,2 +1,2 @@
 #cloud-config
-hostname: ${instance_hostname}
+preserve_hostname: true
