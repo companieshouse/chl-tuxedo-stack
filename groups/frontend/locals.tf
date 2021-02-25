@@ -9,6 +9,7 @@ locals {
   }
 
   common_resource_name = "${var.service_subtype}-${var.service}-${var.environment}"
+  dns_zone = "${var.environment}.${var.dns_zone_suffix}"
 
   tuxedo_services = flatten([
     for tuxedo_server_type_key, tuxedo_services in var.tuxedo_services : [

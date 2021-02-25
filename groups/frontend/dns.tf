@@ -1,5 +1,5 @@
 data "aws_route53_zone" "frontend" {
-  name     = var.dns_zone_suffix
+  name     = local.dns_zone
   vpc_id   = data.aws_vpc.heritage.id
 }
 
