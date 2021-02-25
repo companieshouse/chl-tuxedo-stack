@@ -124,12 +124,18 @@
     group: "{{ tuxedo_user }}"
     recurse: yes
 
+- name: "{{ tuxedo_user }} : Check state of {{ tuxedo_user }} current deployment directory"
+  stat:
+    path: "/home/{{ tuxedo_user }}/{{ deployment_dir }}"
+  register: current_deployment_files
+
 - name: "{{ tuxedo_user }} : Stop ngSrv services"
   become_user: "{{ tuxedo_user }}"
   shell: "source $HOME/deployment/config/envfile && ngsrv.sh stop"
   args:
     executable: /bin/bash
   ignore_errors: yes
+  when: current_deployment_files.stat.exists
 
 - name: "{{ tuxedo_user }} : Stop Tuxedo services"
   become_user: "{{ tuxedo_user }}"
@@ -137,22 +143,19 @@
   args:
     executable: /bin/bash
   ignore_errors: yes
+  when: current_deployment_files.stat.exists
 
 - name: "{{ tuxedo_user }} : Clear IPC facilities"
   become_user: "{{ tuxedo_user }}"
   shell: "source $HOME/deployment/config/envfile && zapipc"
   args:
     executable: /bin/bash
+  when: current_deployment_files.stat.exists
 
 - name: "{{ tuxedo_user }} : Remove {{ tuxedo_user }} rollback directory if present"
   file:
     path: "/home/{{ tuxedo_user }}/{{ rollback_dir }}"
     state: absent
-
-- name: "{{ tuxedo_user }} : Check state of {{ tuxedo_user }} current deployment directory"
-  stat:
-    path: "/home/{{ tuxedo_user }}/{{ deployment_dir }}"
-  register: current_deployment_files
 
 - name: "{{ tuxedo_user }} : Backup {{ tuxedo_user }} current deployment directory if one exists"
   become_user: "{{ tuxedo_user }}"
