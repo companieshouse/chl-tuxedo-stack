@@ -7,18 +7,8 @@
   register: new_deployment_files
 
 - name: "{{ tuxedo_user }} : Copy application artefact files to temporary {{ tuxedo_user }} deployment directory"
-  command: "cp -r {{ application_artefact_files.path }}/. {{ new_deployment_files.path }}"
-
-- name: "{{ tuxedo_user }} : Ensure no config directory exists from extracted application artefact"
-  file:
-    path: "{{ new_deployment_files.path }}/config"
-    state: absent
-
-- name: "{{ tuxedo_user }} : Create empty config directory"
   become_user: "{{ tuxedo_user }}"
-  file:
-    path: "{{ new_deployment_files.path }}/config"
-    state: directory
+  command: "cp -r {{ application_artefact_files.path }}/. {{ new_deployment_files.path }}"
 
 - name: "{{ tuxedo_user }} : Copy application config files to temporary {{ tuxedo_user }} deployment directory"
   become_user: "{{ tuxedo_user }}"
@@ -106,6 +96,18 @@
     path: "{{ new_deployment_files.path }}/config/ubbconfig"
     regexp: '<tuxedo_ipc_key>'
     replace: '{{ tuxedo_service_config[tuxedo_user].ipc_key }}'
+
+- name: "{{ tuxedo_user }} : Set user identifier in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/ubbconfig"
+    regexp: '<tuxedo_user_id>'
+    replace: '{{ tuxedo_service_config[tuxedo_user].uid }}'
+
+- name: "{{ tuxedo_user }} : Set group identifier in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/ubbconfig"
+    regexp: '<tuxedo_group_id>'
+    replace: '{{ tuxedo_service_config[tuxedo_user].gid }}'
 
 # TODO tuxedo config DB password (need to feed in as variable so add to pipeline and check upfront for value)
 

@@ -14,7 +14,7 @@
      tuxedo_logical_machine_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_SRV') | upper }}"
      tuxedo_local_domain_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_LOD') | upper }}"
 
-- name: Print all available facts
+- name: Using constructed variables
   ansible.builtin.debug:
     var: "{{ item }}"
   loop:
