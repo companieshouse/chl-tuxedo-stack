@@ -109,6 +109,12 @@
     regexp: '<tuxedo_group_id>'
     replace: '{{ tuxedo_service_config[tuxedo_user].gid }}'
 
+- name: "{{ tuxedo_user }} : Set service name in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/ubbconfig"
+    regexp: '<service_name>'
+    replace: '{{ tuxedo_user }}'
+
 # TODO tuxedo config DB password (need to feed in as variable so add to pipeline and check upfront for value)
 
 - name: "{{ tuxedo_user }} : Set permissions for new deployment files"
