@@ -115,6 +115,18 @@
     regexp: '<service_name>'
     replace: '{{ tuxedo_user }}'
 
+- name: "{{ tuxedo_user }} : Set database username in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/ubbconfig"
+    regexp: '<database_username>'
+    replace: '{{ database_username }}'
+
+- name: "{{ tuxedo_user }} : Set database password in Tuxedo config"
+  replace:
+    path: "{{ new_deployment_files.path }}/config/ubbconfig"
+    regexp: '<database_password>'
+    replace: '{{ database_password }}'
+
 # TODO tuxedo config DB password (need to feed in as variable so add to pipeline and check upfront for value)
 
 - name: "{{ tuxedo_user }} : Set permissions for new deployment files"
