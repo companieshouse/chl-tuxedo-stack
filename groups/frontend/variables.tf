@@ -88,23 +88,23 @@ variable "tuxedo_services" {
     },
     ewf = {
       ois    = 2000,
-      orc    = 2001,
-      ewf    = 2002,
-      chips  = 2003,
+      search = 2001,
+      chips  = 2002,
+      ef     = 2003,
       ixbrl  = 2004
       tnep   = 2005,
       trans  = 2006,
-      sameas = 2007,
+      gen    = 2007,
     },
     xml = {
       ois    = 3000,
-      orc    = 3001,
-      ewf    = 3002,
-      chips  = 3003,
+      search = 3001,
+      chips  = 3002,
+      ef     = 3003,
       ixbrl  = 3004
       tnep   = 3005,
       trans  = 3006,
-      sameas = 3007,
+      gen    = 3007,
     },
   }
 }
