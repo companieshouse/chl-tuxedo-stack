@@ -119,6 +119,10 @@ resource "aws_instance" "frontend" {
     }
   }
 
+  root_block_device {
+    volume_size = var.root_volume_size
+  }
+
   tags = merge(local.common_tags ,{
     Name = "i${count.index}.${var.service_subtype}.${var.service}-${var.environment}"
   })

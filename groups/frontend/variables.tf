@@ -60,6 +60,12 @@ variable "region" {
   description = "The AWS region in which resources will be administered"
 }
 
+variable "root_volume_size" {
+  type        = number
+  description = "The size of the root volume in gibibytes (GiB)"
+  default     = 20
+}
+
 variable "service" {
   type        = string
   description = "The service name to be used when creating AWS resources"
