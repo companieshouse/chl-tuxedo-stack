@@ -11,8 +11,14 @@ variable "ami_version_pattern" {
 
 variable "application_subnet_pattern" {
   type        = string
-  description = "The pattern to use when filtering for VPC subnets by 'Name' tag"
+  description = "The pattern to use when filtering for application subnets by 'Name' tag"
   default     = "sub-application-*"
+}
+
+variable "web_subnet_pattern" {
+  type        = string
+  description = "The pattern to use when filtering for web subnets by 'Name' tag"
+  default     = "sub-web-*"
 }
 
 variable "dns_zone_suffix" {

@@ -19,6 +19,20 @@ data "aws_subnet" "application" {
   id    = tolist(data.aws_subnet_ids.application.ids)[count.index]
 }
 
+data "aws_subnet_ids" "web" {
+  vpc_id = data.aws_vpc.heritage.id
+
+  filter {
+    name   = "tag:Name"
+    values = [var.web_subnet_pattern]
+  }
+}
+
+data "aws_subnet" "web" {
+  count = length(data.aws_subnet_ids.web.ids)
+  id    = tolist(data.aws_subnet_ids.web.ids)[count.index]
+}
+
 data "aws_ami" "chl_tuxedo" {
   owners      = [var.ami_owner_id]
   most_recent = true
@@ -51,11 +65,23 @@ resource "aws_security_group" "services" {
     for_each = each.value
     iterator = service
     content {
-      description = "Allow inbound traffic from network load balancer to ${service.key} service in ${each.key} server group"
+      description = "Allow health check requests from network load balancer to ${service.key} service in ${each.key} server group"
       from_port   = service.value
       to_port     = service.value
       protocol    = "TCP"
       cidr_blocks = formatlist("%s/32", [for eni in data.aws_network_interface.nlb : eni.private_ip])
+    }
+  }
+
+  dynamic "ingress" {
+    for_each = each.value
+    iterator = service
+    content {
+      description = "Allow client requests from frontend web servers to ${service.key} service in ${each.key} server group"
+      from_port   = service.value
+      to_port     = service.value
+      protocol    = "TCP"
+      cidr_blocks = data.aws_subnet.web.*.cidr_block
     }
   }
 
