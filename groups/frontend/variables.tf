@@ -136,3 +136,8 @@ variable "ssh_keyname" {
   type        = string
   description = "The SSH keypair name to use for remote connectivity"
 }
+
+variable "user_data_merge_strategy" {
+  default     = "list(append)+dict(recurse_array)+str()"
+  description = "Merge strategy to apply to user-data sections for cloud-init"
+}

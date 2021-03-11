@@ -1,8 +1,3 @@
-variable "user_data_merge_strategy" {
-  default     = "list(append)+dict(recurse_array)+str()"
-  description = "Merge strategy to apply to user-data sections for cloud-init"
-}
-
 data "template_cloudinit_config" "config" {
   count = var.instance_count
 
