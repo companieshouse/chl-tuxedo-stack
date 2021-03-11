@@ -5,7 +5,7 @@ locals {
     Environment    = var.environment
     Service        = var.service
     ServiceSubType = var.service_subtype
-    Team           = "Platform"
+    Team           = var.team
   }
 
   common_resource_name = "${var.service_subtype}-${var.service}-${var.environment}"
