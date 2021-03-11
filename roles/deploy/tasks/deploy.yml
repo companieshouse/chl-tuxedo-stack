@@ -144,8 +144,6 @@
   command: "cp {{ item.path }} {{ new_deployment_files.path }}/config"
   loop: "{{ idx_configs.files }}"
 
-# TODO tuxedo config DB password (need to feed in as variable so add to pipeline and check upfront for value)
-
 - name: "{{ tuxedo_user }} : Set permissions for new deployment files"
   file:
     path: "{{ new_deployment_files.path }}"
