@@ -127,6 +127,23 @@
     regexp: '<database_password>'
     replace: '{{ database_password }}'
 
+- name: "{{ tuxedo_user }} : Find idx files for service"
+  find:
+    paths: "{{ new_deployment_files.path }}/idx/{{ tuxedo_user }}"
+    patterns: "*"
+  register: idx_configs
+
+- name: "{{ tuxedo_user }} : Assert idx files found"
+  assert:
+    that:
+      - idx_configs.files | length > 0
+    msg: "idx files must exist for service {{ tuxedo_user }} in artefact subdirectory idx/{{ tuxedo_user }}"
+
+- name: "{{ tuxedo_user }} : Copy idx files for service to config directory"
+  become_user: "{{ tuxedo_user }}"
+  command: "cp {{ item.path }} {{ new_deployment_files.path }}/config"
+  loop: "{{ idx_configs.files }}"
+
 # TODO tuxedo config DB password (need to feed in as variable so add to pipeline and check upfront for value)
 
 - name: "{{ tuxedo_user }} : Set permissions for new deployment files"
