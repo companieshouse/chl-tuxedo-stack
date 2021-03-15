@@ -2,4 +2,4 @@
 
 collections:
 - name: amazon.aws
-  version: ">=1.2.1"
+- name: community.hashi_vault

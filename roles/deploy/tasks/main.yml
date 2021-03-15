@@ -1,71 +1,47 @@
 ---
 
-# We setup variable suffixes here for populating Tuxedo configs; the general
-# format used for the domain id, machine id and local domain suffixes is:
-#   <SERVICE>_INSTANCE_<INSTANCE_INDEX>_<ENV>_<TUX_VAR_TYPE>
-#
-# Note the 'service' prefix is added later, in 'deploy.yml', when this context
-# is available; there is a 30 character maximum for these Tuxedo config values
-#
-# The hostname is assumed to be in the format: i<instance-index>-frontend-tuxedo-<environment>
-- set_fact:
-     tuxedo_machine_name: "{{ ansible_facts.hostname }}"
-     tuxedo_domain_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_DOM') | upper }}"
-     tuxedo_logical_machine_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_SRV') | upper }}"
-     tuxedo_local_domain_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_LOD') | upper }}"
-
-- name: Using constructed variables
-  ansible.builtin.debug:
-    var: "{{ item }}"
-  loop:
-    - tuxedo_machine_name
-    - tuxedo_domain_id_suffix
-    - tuxedo_logical_machine_id_suffix
-    - tuxedo_local_domain_suffix
-
 - name: Check required variables are set
   assert:
     that:
       - application_artefact_path is defined and application_artefact_path | trim | length > 0
       - application_configs_path is defined and application_configs_path | trim | length > 0
       - snmp_host_address is defined and snmp_host_address | trim | length > 0
-      - database_username is defined and database_username | trim | length > 0
-      - database_password is defined and database_password | trim | length > 0
-    msg: "Required variable is empty or undefined"
+      - alpha_key_url is defined and alpha_key_url | trim | length > 0
+      - xbrl_validator_url is defined and xbrl_validator_url | trim | length > 0
+      - tnep_url is defined and tnep_url | trim | length > 0
+      - xslt_transformer_url is defined and xslt_transformer_url | trim | length > 0
+    msg: "Required variable(s) empty or undefined"
+
+# The hostname is assumed to be in the format: i<instance-index>-frontend-tuxedo-<environment>
+- set_fact:
+     tuxedo_domain_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_DOM') | upper }}"
+     tuxedo_logical_machine_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_SRV') | upper }}"
+     tuxedo_local_domain_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_LOD') | upper }}"
+
+- name: Using constructed variable suffixes
+  ansible.builtin.debug:
+    var: "{{ item }}"
+  loop:
+    - tuxedo_domain_id_suffix
+    - tuxedo_logical_machine_id_suffix
+    - tuxedo_local_domain_suffix
 
 - name: Create temporary directory for application artefact files
   tempfile:
     state: directory
   register: application_artefact_files
 
-- name: Create temporary directory for config artefact files
-  tempfile:
-    state: directory
-  register: application_config_files
-
 - name: Set permissions to allow service users to read from temporary directory
   file:
-    path: "{{ item }}"
+    path: "{{ application_artefact_files.path }}"
     owner: root
     group: "{{ tuxedo_service_group }}"
     mode: 0755
-  loop:
-    -  "{{ application_artefact_files.path }}"
-    -  "{{ application_config_files.path }}"
 
 - name: Deploy and extract application arterfact
   unarchive:
     src: "{{ application_artefact_path }}"
     dest: "{{ application_artefact_files.path }}"
-    remote_src: no
-    owner: root
-    group: "{{ tuxedo_service_group }}"
-    mode: 0755
-
-- name: Deploy and extract application config files
-  unarchive:
-    src: "{{ application_configs_path }}"
-    dest: "{{ application_config_files.path }}"
     remote_src: no
     owner: root
     group: "{{ tuxedo_service_group }}"
@@ -78,8 +54,5 @@
 
 - name: Remove temporary directories
   file:
-    path: "{{ item }}"
+    path: "{{ application_artefact_files.path }}"
     state: absent
-  loop:
-    - "{{ application_artefact_files.path }}"
-    - "{{ application_config_files.path }}"

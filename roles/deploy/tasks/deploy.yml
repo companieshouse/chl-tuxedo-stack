@@ -1,5 +1,33 @@
 ---
 
+- name: Retrieve service-specific database credentials from Hashicorp Vault
+  set_fact:
+    "{{ item }}_db_credentials": "{{ lookup('community.hashi_vault.hashi_vault', 'applications/heritage-staging-eu-west-2/tuxedo/database/{{ item }}') }}"
+  no_log: True
+  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases }}"
+
+- name: Set database credential variables for template population
+  set_fact:
+    "{{ item }}_database_password": "{{ vars[item + '_db_credentials']['database_password'] }}"
+    "{{ item }}_database_username": "{{ vars[item + '_db_credentials']['database_username'] }}"
+    "{{ item }}_database_tns_name": "{{ vars[item + '_db_credentials']['database_tns_name'] }}"
+  no_log: True
+  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases }}"
+
+- name: Set additional variables for template population
+  set_fact:
+    private_host_address: "{{ inventory_hostname }}"
+    private_host_local_domain_port: "{{ tuxedo_service_config[tuxedo_user].local_domain_port }}"
+    service_name: "{{ tuxedo_user }}"
+    tuxedo_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_domain_id_suffix }}"
+    tuxedo_group_id: "{{ tuxedo_service_config[tuxedo_user].gid }}"
+    tuxedo_ipc_key: "{{ tuxedo_service_config[tuxedo_user].ipc_key }}"
+    tuxedo_local_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_local_domain_suffix }}"
+    tuxedo_logical_machine_id: "{{ tuxedo_user | upper }}_{{ tuxedo_logical_machine_id_suffix }}"
+    tuxedo_machine_name: "{{ ansible_facts.hostname }}"
+    tuxedo_user_id: "{{ tuxedo_service_config[tuxedo_user].uid }}"
+  no_log: True
+
 - name: "{{ tuxedo_user }} : Create temporary directory for new {{ tuxedo_user }} deployment"
   become_user: "{{ tuxedo_user }}"
   tempfile:
@@ -10,10 +38,6 @@
   become_user: "{{ tuxedo_user }}"
   command: "cp -r {{ application_artefact_files.path }}/. {{ new_deployment_files.path }}"
 
-- name: "{{ tuxedo_user }} : Copy application config files to temporary {{ tuxedo_user }} deployment directory"
-  become_user: "{{ tuxedo_user }}"
-  command: "cp -r {{ application_config_files.path }}/{{ tuxedo_user }}/. {{ new_deployment_files.path }}/config"
-
 - name: "{{ tuxedo_user }} : Create empty log directory"
   file:
     path: "{{ new_deployment_files.path }}/logdir"
@@ -22,110 +46,16 @@
     mode: 0755
     state: directory
 
-- name: "{{ tuxedo_user }} : Find nGsrv config files"
-  find:
-    paths: "{{ new_deployment_files.path }}/config"
-    patterns: "ngsrv.params*"
-    recurse: yes
-  register: ngsrv_configs
-
-- name: "{{ tuxedo_user }} : Assert nGsrv config files found"
-  assert:
-    that:
-      - ngsrv_configs.files | length > 0
-    msg: "nGsrv configs must exist for placeholder values to be replaced"
-
-# We assume 'inventory_hostname' is set to the private IPv4 address of the
-# instance (i.e. 'hostnames: private-ip-address' is present in the dynamic
-# inventory configuration file)
-- name: "{{ tuxedo_user }} : Set private IPv4 host address in nGsrv configs"
-  replace:
-    path: "{{ item.path }}"
-    regexp: '^(?P<addr_env_var>ADDR=)<private-host-address>'
-    replace: '\g<addr_env_var>{{ inventory_hostname }}'
-  loop: "{{ ngsrv_configs.files }}"
-
-- name: "{{ tuxedo_user }} : Set SNMP host address in nGsrv config files"
-  replace:
-    path: "{{ item.path }}"
-    regexp: '^(?P<snmp_env_var>SNMPMGR=)<snmp-host-address>'
-    replace: '\g<snmp_env_var>{{ snmp_host_address }}'
-  loop: "{{ ngsrv_configs.files }}"
-
-- name: "{{ tuxedo_user }} : Set machine name in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/ubbconfig"
-    regexp: '<tuxedo_machine_name>'
-    replace: '{{ tuxedo_machine_name }}'
-
-- name: "{{ tuxedo_user }} : Set logical machine identifier in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/ubbconfig"
-    regexp: '<tuxedo_logical_machine_id>'
-    replace: '{{ tuxedo_user | upper }}_{{ tuxedo_logical_machine_id_suffix }}'
-
-- name: "{{ tuxedo_user }} : Set domain identifier in Tuxedo configs"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/{{ item }}"
-    regexp: '<tuxedo_domain_id>'
-    replace: '{{ tuxedo_user | upper }}_{{ tuxedo_domain_id_suffix }}'
-  loop:
-    - ubbconfig
-    - dmconfig
-
-- name: "{{ tuxedo_user }} : Set local domain identifier in Tuxedo configs"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/dmconfig"
-    regexp: '<tuxedo_local_domain_id>'
-    replace: '{{ tuxedo_user | upper }}_{{ tuxedo_local_domain_suffix }}'
-
-- name: "{{ tuxedo_user }} : Set private IPv4 host address in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/dmconfig"
-    regexp: '<private-host-address>'
-    replace: '{{ inventory_hostname }}'
-
-- name: "{{ tuxedo_user }} : Set local domain port in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/dmconfig"
-    regexp: '<private-host-local-domain-port>'
-    replace: '{{ tuxedo_service_config[tuxedo_user].local_domain_port }}'
-
-- name: "{{ tuxedo_user }} : Set IPC key in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/ubbconfig"
-    regexp: '<tuxedo_ipc_key>'
-    replace: '{{ tuxedo_service_config[tuxedo_user].ipc_key }}'
-
-- name: "{{ tuxedo_user }} : Set user identifier in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/ubbconfig"
-    regexp: '<tuxedo_user_id>'
-    replace: '{{ tuxedo_service_config[tuxedo_user].uid }}'
-
-- name: "{{ tuxedo_user }} : Set group identifier in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/ubbconfig"
-    regexp: '<tuxedo_group_id>'
-    replace: '{{ tuxedo_service_config[tuxedo_user].gid }}'
-
-- name: "{{ tuxedo_user }} : Set service name in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/ubbconfig"
-    regexp: '<service_name>'
-    replace: '{{ tuxedo_user }}'
-
-- name: "{{ tuxedo_user }} : Set database username in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/ubbconfig"
-    regexp: '<database_username>'
-    replace: '{{ database_username }}'
-
-- name: "{{ tuxedo_user }} : Set database password in Tuxedo config"
-  replace:
-    path: "{{ new_deployment_files.path }}/config/ubbconfig"
-    regexp: '<database_password>'
-    replace: '{{ database_password }}'
+- name: "{{ tuxedo_user }} : Populate template config files"
+  template:
+    src: "{{ item }}"
+    dest: "{{ new_deployment_files.path }}/config//{{ item | basename | replace('.j2', '') }}"
+    owner: "{{ tuxedo_user }}"
+    group: "{{ tuxedo_user }}"
+    mode: 0644
+  with_fileglob:
+    - "{{ application_configs_path }}/{{ tuxedo_user }}/*.j2"
+  no_log: True
 
 - name: "{{ tuxedo_user }} : Find idx files for service"
   find:
