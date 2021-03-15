@@ -132,11 +132,6 @@ variable "ssh_master_public_key" {
   description = "The SSH master public key; EC2 instance connect should be used for regular connectivity"
 }
 
-variable "ssh_keyname" {
-  type        = string
-  description = "The SSH keypair name to use for remote connectivity"
-}
-
 variable "team" {
   type        = string
   description = "The team name for ownership of this service"
