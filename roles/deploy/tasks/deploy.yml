@@ -19,6 +19,7 @@
     private_host_address: "{{ inventory_hostname }}"
     private_host_local_domain_port: "{{ tuxedo_service_config[tuxedo_user].local_domain_port }}"
     service_name: "{{ tuxedo_user }}"
+    shared_memory_id: "{{ tuxedo_service_config[tuxedo_user].shared_memory_id }}"
     tuxedo_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_domain_id_suffix }}"
     tuxedo_group_id: "{{ tuxedo_service_config[tuxedo_user].gid }}"
     tuxedo_ipc_key: "{{ tuxedo_service_config[tuxedo_user].ipc_key }}"

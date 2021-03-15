@@ -20,11 +20,15 @@ tuxedo_service_config:
     uid: "{{ tuxedo_service_user_id_minimum + (0 * tuxedo_service_user_id_increment) | int }}"
     ipc_key: "{{ tuxedo_service_ipc_key_start + (0 * tuxedo_service_ipc_key_increment) | int }}"
     local_domain_port: "{{ tuxedo_service_domain_port_start + (0 * tuxedo_service_domain_port_increment) | int }}"
+    shared_memory_id: 5000
+    required_databases:
+      - chdata
   chd:
     gid: "{{ tuxedo_service_user_id_minimum + (1 * tuxedo_service_user_id_increment) | int }}"
     uid:  "{{ tuxedo_service_user_id_minimum + (1 * tuxedo_service_user_id_increment) | int }}"
     ipc_key: "{{ tuxedo_service_ipc_key_start + (1 * tuxedo_service_ipc_key_increment) | int }}"
     local_domain_port: "{{ tuxedo_service_domain_port_start + (1 * tuxedo_service_domain_port_increment) | int }}"
+    shared_memory_id: 4000
     required_databases:
       - chdata
   ewf:
@@ -32,6 +36,7 @@ tuxedo_service_config:
     uid: "{{ tuxedo_service_user_id_minimum + (2 * tuxedo_service_user_id_increment) | int }}"
     ipc_key: "{{ tuxedo_service_ipc_key_start + (2 * tuxedo_service_ipc_key_increment) | int }}"
     local_domain_port: "{{ tuxedo_service_domain_port_start + (2 * tuxedo_service_domain_port_increment) | int }}"
+    shared_memory_id: 2000
     required_databases:
       - bcd
       - chdata
@@ -41,6 +46,7 @@ tuxedo_service_config:
     uid: "{{ tuxedo_service_user_id_minimum + (3 * tuxedo_service_user_id_increment) | int }}"
     ipc_key: "{{ tuxedo_service_ipc_key_start + (3 * tuxedo_service_ipc_key_increment) | int }}"
     local_domain_port: "{{ tuxedo_service_domain_port_start + (3 * tuxedo_service_domain_port_increment) | int }}"
+    shared_memory_id: 3000
     required_databases:
       - bcd
       - chdata
