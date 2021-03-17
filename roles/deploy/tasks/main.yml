@@ -3,6 +3,7 @@
 - name: Check required variables are set
   assert:
     that:
+      - environment_name is defined and environment_name | trim | length > 0
       - application_artefact_path is defined and application_artefact_path | trim | length > 0
       - application_configs_path is defined and application_configs_path | trim | length > 0
       - snmp_host_address is defined and snmp_host_address | trim | length > 0
