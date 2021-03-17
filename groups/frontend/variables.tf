@@ -41,7 +41,7 @@ variable "instance_count" {
 variable "instance_type" {
   type        = string
   description = "The instance type to use"
-  default     = "t3.micro"
+  default     = "t3.small"
 }
 
 variable "lb_deletion_protection" {
