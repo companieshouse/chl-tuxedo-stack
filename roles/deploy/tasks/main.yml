@@ -1,0 +1,59 @@
+---
+
+- name: Check required variables are set
+  assert:
+    that:
+      - environment_name is defined and environment_name | trim | length > 0
+      - application_artefact_path is defined and application_artefact_path | trim | length > 0
+      - application_configs_path is defined and application_configs_path | trim | length > 0
+      - snmp_host_address is defined and snmp_host_address | trim | length > 0
+      - alpha_key_url is defined and alpha_key_url | trim | length > 0
+      - xbrl_validator_url is defined and xbrl_validator_url | trim | length > 0
+      - tnep_url is defined and tnep_url | trim | length > 0
+      - xslt_transformer_url is defined and xslt_transformer_url | trim | length > 0
+    msg: "Required variable(s) empty or undefined"
+
+# The hostname is assumed to be in the format: i<instance-index>-frontend-tuxedo-<environment>
+- set_fact:
+     tuxedo_domain_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_DOM') | upper }}"
+     tuxedo_logical_machine_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_SRV') | upper }}"
+     tuxedo_local_domain_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_LOD') | upper }}"
+
+- name: Using constructed variable suffixes
+  ansible.builtin.debug:
+    var: "{{ item }}"
+  loop:
+    - tuxedo_domain_id_suffix
+    - tuxedo_logical_machine_id_suffix
+    - tuxedo_local_domain_suffix
+
+- name: Create temporary directory for application artefact files
+  tempfile:
+    state: directory
+  register: application_artefact_files
+
+- name: Set permissions to allow service users to read from temporary directory
+  file:
+    path: "{{ application_artefact_files.path }}"
+    owner: root
+    group: "{{ tuxedo_service_group }}"
+    mode: 0755
+
+- name: Deploy and extract application arterfact
+  unarchive:
+    src: "{{ application_artefact_path }}"
+    dest: "{{ application_artefact_files.path }}"
+    remote_src: no
+    owner: root
+    group: "{{ tuxedo_service_group }}"
+    mode: 0755
+
+- include_tasks: deploy.yml
+  loop: "{{ tuxedo_service_users }}"
+  loop_control:
+    loop_var: tuxedo_user
+
+- name: Remove temporary directories
+  file:
+    path: "{{ application_artefact_files.path }}"
+    state: absent

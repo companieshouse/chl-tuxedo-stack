@@ -1,0 +1,181 @@
+---
+
+- name: Retrieve service-specific database credentials from Hashicorp Vault
+  set_fact:
+    "{{ item }}_db_credentials": "{{ lookup('community.hashi_vault.hashi_vault', 'applications/heritage-{{ environment_name }}-eu-west-2/tuxedo/database/{{ item }}') }}"
+  no_log: True
+  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases }}"
+
+- name: Set database credential variables for template population
+  set_fact:
+    "{{ item }}_database_password": "{{ vars[item + '_db_credentials']['database_password'] }}"
+    "{{ item }}_database_username": "{{ vars[item + '_db_credentials']['database_username'] }}"
+    "{{ item }}_database_tns_name": "{{ vars[item + '_db_credentials']['database_tns_name'] }}"
+  no_log: True
+  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases }}"
+
+- name: Set additional variables for template population
+  set_fact:
+    private_host_address: "{{ inventory_hostname }}"
+    private_host_local_domain_port: "{{ tuxedo_service_config[tuxedo_user].local_domain_port }}"
+    service_name: "{{ tuxedo_user }}"
+    shared_memory_id: "{{ tuxedo_service_config[tuxedo_user].shared_memory_id }}"
+    tuxedo_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_domain_id_suffix }}"
+    tuxedo_group_id: "{{ tuxedo_service_config[tuxedo_user].gid }}"
+    tuxedo_ipc_key: "{{ tuxedo_service_config[tuxedo_user].ipc_key }}"
+    tuxedo_local_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_local_domain_suffix }}"
+    tuxedo_logical_machine_id: "{{ tuxedo_user | upper }}_{{ tuxedo_logical_machine_id_suffix }}"
+    tuxedo_machine_name: "{{ ansible_facts.hostname }}"
+    tuxedo_user_id: "{{ tuxedo_service_config[tuxedo_user].uid }}"
+  no_log: True
+
+- name: "{{ tuxedo_user }} : Create temporary directory for new {{ tuxedo_user }} deployment"
+  become_user: "{{ tuxedo_user }}"
+  tempfile:
+    state: directory
+  register: new_deployment_files
+
+- name: "{{ tuxedo_user }} : Copy application artefact files to temporary {{ tuxedo_user }} deployment directory"
+  become_user: "{{ tuxedo_user }}"
+  command: "cp -r {{ application_artefact_files.path }}/. {{ new_deployment_files.path }}"
+
+- name: "{{ tuxedo_user }} : Create empty log directory"
+  file:
+    path: "{{ new_deployment_files.path }}/logdir"
+    owner: "{{ tuxedo_user }}"
+    group: "{{ tuxedo_user }}"
+    mode: 0755
+    state: directory
+
+- name: "{{ tuxedo_user }} : Populate template config files"
+  template:
+    src: "{{ item }}"
+    dest: "{{ new_deployment_files.path }}/config//{{ item | basename | replace('.j2', '') }}"
+    owner: "{{ tuxedo_user }}"
+    group: "{{ tuxedo_user }}"
+    mode: 0644
+  with_fileglob:
+    - "{{ application_configs_path }}/{{ tuxedo_user }}/*.j2"
+  no_log: True
+
+- name: "{{ tuxedo_user }} : Find idx files for service"
+  find:
+    paths: "{{ new_deployment_files.path }}/idx/{{ tuxedo_user }}"
+    patterns: "*"
+  register: idx_configs
+
+- name: "{{ tuxedo_user }} : Assert idx files found"
+  assert:
+    that:
+      - idx_configs.files | length > 0
+    msg: "idx files must exist for service {{ tuxedo_user }} in artefact subdirectory idx/{{ tuxedo_user }}"
+
+- name: "{{ tuxedo_user }} : Copy idx files for service to config directory"
+  become_user: "{{ tuxedo_user }}"
+  command: "cp {{ item.path }} {{ new_deployment_files.path }}/config"
+  loop: "{{ idx_configs.files }}"
+
+- name: "{{ tuxedo_user }} : Set permissions for new deployment files"
+  file:
+    path: "{{ new_deployment_files.path }}"
+    owner: "{{ tuxedo_user }}"
+    group: "{{ tuxedo_user }}"
+    recurse: yes
+
+- name: "{{ tuxedo_user }} : Check state of {{ tuxedo_user }} current deployment directory"
+  stat:
+    path: "/home/{{ tuxedo_user }}/{{ deployment_dir }}"
+  register: current_deployment_files
+
+- name: "{{ tuxedo_user }} : Stop ngSrv services"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && ngsrv.sh stop"
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  when: current_deployment_files.stat.exists
+
+- name: "{{ tuxedo_user }} : Stop Tuxedo services"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && tmshutdown -y"
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  when: current_deployment_files.stat.exists
+
+- name: "{{ tuxedo_user }} : Clear IPC facilities"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && zapipc"
+  args:
+    executable: /bin/bash
+  when: current_deployment_files.stat.exists
+
+- name: "{{ tuxedo_user }} : Remove {{ tuxedo_user }} rollback directory if present"
+  file:
+    path: "/home/{{ tuxedo_user }}/{{ rollback_dir }}"
+    state: absent
+
+- name: "{{ tuxedo_user }} : Backup {{ tuxedo_user }} current deployment directory if one exists"
+  become_user: "{{ tuxedo_user }}"
+  command: "mv /home/{{ tuxedo_user }}/{{ deployment_dir }} /home/{{ tuxedo_user }}/{{ rollback_dir }}"
+  when: current_deployment_files.stat.exists
+
+- name: "{{ tuxedo_user }} : Install new deployment files"
+  become_user: "{{ tuxedo_user }}"
+  command: "mv {{ new_deployment_files.path }} /home/{{ tuxedo_user }}/{{ deployment_dir }}"
+
+- name: "{{ tuxedo_user }} : Lint Tuxedo ubbconfig file after variable population"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && tmloadcf -n ubbconfig"
+  args:
+    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    executable: /bin/bash
+  register: ubbconfig_lint
+
+- name: "{{ tuxedo_user }} : Assert Tuxedo ubbconfig lint success"
+  assert:
+    that:
+      - ubbconfig_lint.rc == 0
+    fail_msg: "Tuxedo ubbconfig file failed lint check"
+    success_msg: "Tuxedo ubbconfig file passed lint check"
+
+- name: "{{ tuxedo_user }} : Generate Tuxedo binary tuxconfig file"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && tmloadcf -y ubbconfig"
+  args:
+    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    executable: /bin/bash
+
+- name: "{{ tuxedo_user }} : Lint Tuxedo dmconfig file after variable population"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && dmloadcf -n dmconfig"
+  args:
+    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    executable: /bin/bash
+  register: dmconfig_lint
+
+- name: "{{ tuxedo_user }} : Assert Tuxedo dmconfig lint success"
+  assert:
+    that:
+      - dmconfig_lint.rc == 0
+    fail_msg: "Tuxedo dmconfig file failed lint check"
+    success_msg: "Tuxedo dmconfig file passed lint check"
+
+- name: "{{ tuxedo_user }} : Generate Tuxedo binary bdmconfig file"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && dmloadcf -y dmconfig"
+  args:
+    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    executable: /bin/bash
+
+- name: "{{ tuxedo_user }} : Start Tuxedo services"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && tmboot -y"
+  args:
+    executable: /bin/bash
+
+- name: "{{ tuxedo_user }} : Start ngSrv services"
+  become_user: "{{ tuxedo_user }}"
+  shell: "source $HOME/deployment/config/envfile && ngsrv.sh start"
+  args:
+    executable: /bin/bash
