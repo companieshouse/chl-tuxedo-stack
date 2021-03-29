@@ -15,6 +15,17 @@ variable "application_subnet_pattern" {
   default     = "sub-application-*"
 }
 
+variable "aws_account" {
+  type        = string
+  description = "The name of the AWS account; used in Vault path when looking up account identifier"
+}
+
+variable "default_log_retention_in_days" {
+  type        = string
+  description = "The default log retention period in days for CloudWatch log groups"
+  default     = 7
+}
+
 variable "web_subnet_pattern" {
   type        = string
   description = "The pattern to use when filtering for web subnets by 'Name' tag"
@@ -82,6 +93,36 @@ variable "service_subtype" {
   type        = string
   description = "The service subtype name to be used when creating AWS resources"
   default     = "frontend"
+}
+
+
+variable "tuxedo_logs" {
+  type        = map(list(any))
+  description = "A map whose keys represent server-side tuxedo server groups with lists of objects representing individual log files for each server group. Each object is expected to have at a minimum a 'name' key. Two CloudWatch log groups will be created for each object for standard output and standard error streams. Optional 'log_retention_in_days' and 'kms_key_id' attributes can be set per-oject to override the default values and will apply to both standard error and standard output log groups respectively."
+  default = {
+    ewf = [
+      { name: "CHG" },
+      { name: "BE" },
+      { name: "DBG" },
+      { name: "CS" },
+      { name: "Sys" },
+      { name: "VXBRL" },
+      { name: "VTNEP" },
+      { name: "TRXML" }
+    ]
+
+    xml = [
+      { name: "CHG" },
+      { name: "BE" },
+      { name: "DBG" },
+      { name: "CS" },
+      { name: "Sys" },
+      { name: "VXBRL" },
+      { name: "VTNEP" },
+      { name: "TRXML" },
+      { name: "IXBRL" }
+    ]
+  }
 }
 
 variable "tuxedo_services" {
