@@ -48,6 +48,14 @@
     group: "{{ tuxedo_service_group }}"
     mode: 0755
 
+- name: "{{ tuxedo_user }} : Create logs directory"
+  file:
+    path: "/var/log/tuxedo"
+    owner: root
+    group: "{{ tuxedo_service_group }}"
+    mode: 0755
+    state: directory
+
 - include_tasks: deploy.yml
   loop: "{{ tuxedo_service_users }}"
   loop_control:
