@@ -109,7 +109,7 @@ resource "aws_security_group" "common" {
   vpc_id = data.aws_vpc.heritage.id
 
   ingress {
-    description = "Allow SSH connectivity from trusted subnets"
+    description = "Allow SSH connectivity for application deployments"
     from_port   = 22
     to_port     = 22
     protocol    = "TCP"
