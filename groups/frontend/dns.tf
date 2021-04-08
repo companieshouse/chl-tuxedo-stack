@@ -20,7 +20,7 @@ resource "aws_route53_record" "instance" {
   count = var.instance_count
 
   zone_id = data.aws_route53_zone.frontend.zone_id
-  name    = "i${count.index}.${var.service_subtype}.${var.service}"
+  name    = "instance-${count.index + 1}.${var.service_subtype}.${var.service}"
   type    = "A"
   ttl     = 300
   records = [aws_instance.frontend[count.index].private_ip]

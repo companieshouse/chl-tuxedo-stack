@@ -12,7 +12,7 @@ data "template_cloudinit_config" "config" {
   part {
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/cloud-init/templates/bootstrap-commands.yml.tpl", {
-      instance_hostname = "i${count.index}-${var.service_subtype}-${var.service}-${var.environment}"
+      instance_hostname = "${var.service_subtype}-${var.service}-${var.environment}-${count.index + 1}"
       lvm_block_devices = var.lvm_block_devices
     })
   }
