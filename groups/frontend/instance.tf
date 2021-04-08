@@ -113,7 +113,7 @@ resource "aws_security_group" "common" {
     from_port   = 22
     to_port     = 22
     protocol    = "TCP"
-    cidr_blocks = values(data.vault_generic_secret.internal_cidrs.data)
+    cidr_blocks = var.deployment_cidrs
   }
 
   egress {

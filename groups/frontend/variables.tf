@@ -26,6 +26,11 @@ variable "default_log_retention_in_days" {
   default     = 7
 }
 
+variable "deployment_cidrs" {
+  type        = list(string)
+  description = "A list of strings representing CIDR ranges from which applications will be deployed to Tuxedo instances via Ansible"
+}
+
 variable "web_subnet_pattern" {
   type        = string
   description = "The pattern to use when filtering for web subnets by 'Name' tag"
