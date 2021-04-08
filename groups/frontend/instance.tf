@@ -163,7 +163,7 @@ resource "aws_instance" "frontend" {
   }
 
   tags = merge(local.common_tags ,{
-    Name = "i${count.index}.${var.service_subtype}.${var.service}-${var.environment}"
+    Name = "${var.service_subtype}-${var.service}-${var.environment}-${count.index + 1}"
   })
   volume_tags = local.common_tags
 }
