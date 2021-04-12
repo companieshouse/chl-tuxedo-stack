@@ -13,11 +13,11 @@
       - xslt_transformer_url is defined and xslt_transformer_url | trim | length > 0
     msg: "Required variable(s) empty or undefined"
 
-# The hostname is assumed to be in the format: i<instance-index>-frontend-tuxedo-<environment>
+# The hostname is assumed to be in the format: frontend-tuxedo-<environment>-<instance-index>
 - set_fact:
-     tuxedo_domain_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_DOM') | upper }}"
-     tuxedo_logical_machine_id_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_SRV') | upper }}"
-     tuxedo_local_domain_suffix: "{{ ansible_facts.hostname | regex_replace('^i(\\d+)-frontend-tuxedo-([A-Za-z].*)$', 'INSTANCE_\\1_\\2_LOD') | upper }}"
+     tuxedo_domain_id_suffix: "{{ ansible_facts.hostname | regex_replace('^frontend-tuxedo-([A-Za-z].*)-(\\d+)$', 'INSTANCE_\\2_\\1_DOM') | upper }}"
+     tuxedo_logical_machine_id_suffix: "{{ ansible_facts.hostname | regex_replace('^frontend-tuxedo-([A-Za-z].*)-(\\d+)$', 'INSTANCE_\\2_\\1_SRV') | upper }}"
+     tuxedo_local_domain_suffix: "{{ ansible_facts.hostname | regex_replace('^frontend-tuxedo-([A-Za-z].*)-(\\d+)$', 'INSTANCE_\\2_\\1_LOD') | upper }}"
 
 - name: Using constructed variable suffixes
   ansible.builtin.debug:
