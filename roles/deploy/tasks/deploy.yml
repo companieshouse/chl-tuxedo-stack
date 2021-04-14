@@ -39,9 +39,9 @@
   become_user: "{{ tuxedo_user }}"
   command: "cp -r {{ application_artefact_files.path }}/. {{ new_deployment_files.path }}"
 
-- name: "{{ tuxedo_user }} : Create empty log directory"
+- name: "{{ tuxedo_user }} : Create service logs directory"
   file:
-    path: "{{ new_deployment_files.path }}/logdir"
+    path: "/var/log/tuxedo/{{ tuxedo_user }}"
     owner: "{{ tuxedo_user }}"
     group: "{{ tuxedo_user }}"
     mode: 0755
