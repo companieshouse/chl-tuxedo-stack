@@ -39,7 +39,7 @@ locals {
     }
   ]...)
 
-  tuxedo_user_log_groups =  merge([
+  tuxedo_user_log_groups = merge([
     for tuxedo_service_key, tuxedo_logs_list in var.tuxedo_user_logs : {
       for tuxedo_log in tuxedo_logs_list[*].name : "${var.service_subtype}-${var.service}-${tuxedo_service_key}-${lower(tuxedo_log)}" => {
         log_retention_in_days = lookup(tuxedo_logs_list[index(tuxedo_logs_list.*.name, tuxedo_log)], "log_retention_in_days", var.default_log_retention_in_days)
@@ -51,7 +51,21 @@ locals {
     }
   ]...)
 
-  tuxedo_log_groups = merge(local.tuxedo_service_log_groups, local.tuxedo_user_log_groups)
+  tuxedo_ngsrv_log_groups = merge([
+    for tuxedo_service_key, ngsrv_logs_list in var.tuxedo_ngsrv_logs : {
+      for ngsrv_log in ngsrv_logs_list[*].name : "${var.service_subtype}-${var.service}-${tuxedo_service_key}-ngsrv-${lower(ngsrv_log)}" => {
+        log_retention_in_days = lookup(ngsrv_logs_list[index(ngsrv_logs_list.*.name, ngsrv_log)], "log_retention_in_days", var.default_log_retention_in_days)
+        kms_key_id = lookup(ngsrv_logs_list[index(ngsrv_logs_list.*.name, ngsrv_log)], "kms_key_id", local.logs_kms_key_id)
+        tuxedo_service = tuxedo_service_key
+        log_name = ngsrv_log
+      }
+    }
+  ]...)
+
+  tuxedo_log_groups = merge(
+    local.tuxedo_service_log_groups,
+    local.tuxedo_user_log_groups
+  )
 
   logs_kms_key_id = data.vault_generic_secret.kms_keys.data["logs"]
 }
