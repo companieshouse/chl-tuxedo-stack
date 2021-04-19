@@ -11,111 +11,111 @@ tuxedo_log_default_parent: /var/log/tuxedo
 
 tuxedo_log_files:
   ewf:
-    - filename: CHG-stdout.txt
+    - file_pattern: CHG-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-chg-stdout
-    - filename: CHG-stderr.txt
+    - file_pattern: CHG-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-chg-stderr
-    - filename: BE-stdout.txt
+    - file_pattern: BE-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-be-stdout
-    - filename: BE-stderr.txt
+    - file_pattern: BE-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-be-stderr
-    - filename: DBG-stdout.txt
+    - file_pattern: DBG-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-dbg-stdout
-    - filename: DBG-stderr.txt
+    - file_pattern: DBG-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-dbg-stderr
-    - filename: CS-stdout.txt
+    - file_pattern: CS-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-cs-stdout
-    - filename: CS-stderr.txt
+    - file_pattern: CS-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-cs-stderr
-    - filename: Sys-stdout.txt
+    - file_pattern: Sys-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-sys-stdout
-    - filename: Sys-stderr.txt
+    - file_pattern: Sys-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-sys-stderr
-    - filename: VXBRL-stdout.txt
+    - file_pattern: VXBRL-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-vxbrl-stdout
-    - filename: VXBRL-stderr.txt
+    - file_pattern: VXBRL-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-vxbrl-stderr
-    - filename: VTNEP-stdout.txt
+    - file_pattern: VTNEP-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-vtnep-stdout
-    - filename: VTNEP-stderr.txt
+    - file_pattern: VTNEP-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-vtnep-stderr
-    - filename: TRXML-stdout.txt
+    - file_pattern: TRXML-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-trxml-stdout
-    - filename: TRXML-stderr.txt
+    - file_pattern: TRXML-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-trxml-stderr
-    - filename: ULOG*
+    - file_pattern: ULOG*
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ulog
-    - filename: ois-ngsrv.log
+    - file_pattern: ois-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-ois
-    - filename: search-ngsrv.log
+    - file_pattern: search-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-search
-    - filename: chips-ngsrv.log
+    - file_pattern: chips-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-chips
-    - filename: ef-ngsrv.log
+    - file_pattern: ef-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-ef
-    - filename: ixbrl-ngsrv.log
+    - file_pattern: ixbrl-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-ixbrl
-    - filename: tnep-ngsrv.log
+    - file_pattern: tnep-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-tnep
-    - filename: trans-ngsrv.log
+    - file_pattern: trans-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-trans
-    - filename: gen-ngsrv.log
+    - file_pattern: gen-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-gen
 
   xml:
-    - filename: CHG-stdout.txt
+    - file_pattern: CHG-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-chg-stdout
-    - filename: CHG-stderr.txt
+    - file_pattern: CHG-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-chg-stderr
-    - filename: BE-stdout.txt
+    - file_pattern: BE-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-be-stdout
-    - filename: BE-stderr.txt
+    - file_pattern: BE-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-be-stderr
-    - filename: DBG-stdout.txt
+    - file_pattern: DBG-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-dbg-stdout
-    - filename: DBG-stderr.txt
+    - file_pattern: DBG-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-dbg-stderr
-    - filename: CS-stdout.txt
+    - file_pattern: CS-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-cs-stdout
-    - filename: CS-stderr.txt
+    - file_pattern: CS-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-cs-stderr
-    - filename: Sys-stdout.txt
+    - file_pattern: Sys-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-sys-stdout
-    - filename: Sys-stderr.txt
+    - file_pattern: Sys-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-sys-stderr
-    - filename: VXBRL-stdout.txt
+    - file_pattern: VXBRL-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-vxbrl-stdout
-    - filename: VXBRL-stderr.txt
+    - file_pattern: VXBRL-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-vxbrl-stderr
-    - filename: VTNEP-stdout.txt
+    - file_pattern: VTNEP-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-vtnep-stdout
-    - filename: VTNEP-stderr.txt
+    - file_pattern: VTNEP-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-vtnep-stderr
-    - filename: TRXML-stdout.txt
+    - file_pattern: TRXML-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-trxml-stdout
-    - filename: TRXML-stderr.txt
+    - file_pattern: TRXML-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-trxml-stderr
-    - filename: IXBRL-stdout.txt
+    - file_pattern: IXBRL-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-ixbrl-stdout
-    - filename: IXBRL-stderr.txt
+    - file_pattern: IXBRL-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-ixbrl-stderr
-    - filename: ULOG*
+    - file_pattern: ULOG*
       cloudwatch_log_group_name: frontend-tuxedo-xml-ulog
-    - filename: ois-ngsrv.log
+    - file_pattern: ois-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-ois
-    - filename: search-ngsrv.log
+    - file_pattern: search-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-search
-    - filename: chips-ngsrv.log
+    - file_pattern: chips-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-chips
-    - filename: ef-ngsrv.log
+    - file_pattern: ef-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-ef
-    - filename: ixbrl-ngsrv.log
+    - file_pattern: ixbrl-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-ixbrl
-    - filename: tnep-ngsrv.log
+    - file_pattern: tnep-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-tnep
-    - filename: trans-ngsrv.log
+    - file_pattern: trans-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-trans
-    - filename: gen-ngsrv.log
+    - file_pattern: gen-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-gen
 
 tuxedo_service_group: tuxedo
