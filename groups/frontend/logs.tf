@@ -24,3 +24,13 @@ resource "aws_cloudwatch_log_group" "ngsrv" {
     nGsrvLogName = each.value.log_name
   })
 }
+
+resource "aws_cloudwatch_log_group" "cloudwatch" {
+  name              = "${var.service_subtype}-${var.service}-cloudwatch"
+  retention_in_days = var.default_log_retention_in_days
+  kms_key_id        = local.logs_kms_key_id
+
+  tags = merge(local.common_tags, {
+    LogName = "cloudwatch"
+  })
+}
