@@ -2,7 +2,7 @@ module "instance_profile" {
   source = "git@github.com:companieshouse/terraform-modules//aws/instance_profile?ref=tags/1.0.62"
   name = "tuxedo-frontend-profile"
 
-  cw_log_group_arns = [for log_group in merge(aws_cloudwatch_log_group.tuxedo, aws_cloudwatch_log_group.ngsrv) : log_group.arn]
+  cw_log_group_arns = [for log_group in merge(aws_cloudwatch_log_group.tuxedo, aws_cloudwatch_log_group.ngsrv, aws_cloudwatch_log_group.cloudwatch) : log_group.arn]
   enable_SSM = true
   kms_key_refs = [
     local.ssm_kms_key_id
