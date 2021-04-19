@@ -34,7 +34,7 @@
     dest: "{{ cloudwatch_agent.config_dir }}/cloudwatch-config.json"
     trim_blocks: False
 
-- name: Update CloudWatch agent configuration
+- name: Start CloudWatch agent using primary configuration file
   command:
     cmd: "{{ cloudwatch_agent.path }} -a fetch-config -m ec2 -s -c file:{{ cloudwatch_agent.config_dir }}//cloudwatch-config.json"
 

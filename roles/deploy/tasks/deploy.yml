@@ -174,7 +174,7 @@
     dest: "{{ cloudwatch_agent.config_dir }}//cloudwatch-config-{{ tuxedo_user }}.json"
     trim_blocks: False
 
-- name: "{{ tuxedo_user }} : Update CloudWatch agent configuration"
+- name: "{{ tuxedo_user }} : Add configuration for Tuxedo service group to CloudWatch agent"
   command:
     cmd: "{{ cloudwatch_agent.path }} -a append-config -m ec2 -s -c file:{{ cloudwatch_agent.config_dir }}//cloudwatch-config-{{ tuxedo_user }}.json"
 
