@@ -80,6 +80,20 @@
   loop_control:
     loop_var: tuxedo_user
 
+- name: Retrieve environment-specific Oracle Database tnsnames.ora network configuration
+  set_fact:
+    tnsnames: "{{ lookup('community.hashi_vault.hashi_vault', 'applications/heritage-{{ environment_name }}-eu-west-2/tuxedo/tnsnames')['tnsnames'] }}"
+  no_log: True
+
+- name: Set Oracle Database tnsnames.ora network configuration
+  template:
+    src: templates/tnsnames.ora.j2
+    dest: "{{ tnsnames_path }}/tnsnames.ora"
+    owner: root
+    group: root
+    mode: 0644
+  no_log: True
+
 - name: Remove temporary directories
   file:
     path: "{{ application_artefact_files.path }}"
