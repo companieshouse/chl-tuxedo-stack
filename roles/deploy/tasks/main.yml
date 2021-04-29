@@ -80,12 +80,12 @@
   loop_control:
     loop_var: tuxedo_user
 
-- name: Retrieve environment-specific Oracle Database tnsnames.ora network configuration
+- name: Retrieve environment-specific Oracle Database network configuration
   set_fact:
     tnsnames: "{{ lookup('community.hashi_vault.hashi_vault', 'applications/heritage-{{ environment_name }}-eu-west-2/tuxedo/tnsnames')['tnsnames'] }}"
   no_log: True
 
-- name: Set Oracle Database tnsnames.ora network configuration
+- name: Set Oracle Database network configuration
   template:
     src: templates/tnsnames.ora.j2
     dest: "{{ tnsnames_path }}"
