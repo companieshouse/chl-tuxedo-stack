@@ -7,7 +7,7 @@ cloudwatch_agent:
   metrics_collection_interval: 60
   user: cwagent
 
-tnsnames_path: /opt/oracle/10.2.0/network/admin
+tnsnames_path: /opt/oracle/10.2.0/network/admin/tnsnames.ora
 
 tuxedo_log_default_parent: /var/log/tuxedo
 
