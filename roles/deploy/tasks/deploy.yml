@@ -113,6 +113,7 @@
 - name: "{{ tuxedo_user }} : Remove configuration for Tuxedo service group from CloudWatch agent"
   command:
     cmd: "{{ cloudwatch_agent.path }} -a remove-config -m ec2 -s -c file:{{ cloudwatch_agent.config_dir }}//cloudwatch-config-{{ tuxedo_user }}.json"
+  ignore_errors: yes
 
 - name: "{{ tuxedo_user }} : Remove {{ tuxedo_user }} rollback directory if present"
   file:
