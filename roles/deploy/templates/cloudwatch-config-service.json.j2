@@ -6,7 +6,7 @@
           {% if tuxedo_user in tuxedo_log_files -%}
           {%+ for log in tuxedo_log_files[tuxedo_user] -%}
           {
-            "file_path": "{{ log.file_path_parent | default(tuxedo_log_default_parent) }}/{{ tuxedo_user }}/{{ log.file_pattern }}",
+            "file_path": "{{ tuxedo_logs_path }}/{{ tuxedo_user }}/{{ log.file_pattern }}",
             "log_group_name": "{{ log.cloudwatch_log_group_name }}",
             "log_stream_name": "{{ cloudwatch_log_stream_name }}"
           }{%- if not loop.last -%},{%- endif -%}
