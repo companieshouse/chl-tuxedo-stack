@@ -36,7 +36,7 @@
 
 - name: Start CloudWatch agent using primary configuration file
   command:
-    cmd: "{{ cloudwatch_agent.path }} -a fetch-config -m ec2 -s -c file:{{ cloudwatch_agent.config_dir }}//cloudwatch-config.json"
+    cmd: "{{ cloudwatch_agent.path }} -a fetch-config -m ec2 -s -c file:{{ cloudwatch_agent.config_dir }}/cloudwatch-config.json"
 
 - name: Using constructed variable suffixes
   ansible.builtin.debug:
