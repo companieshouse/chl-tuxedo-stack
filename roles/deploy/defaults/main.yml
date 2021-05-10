@@ -8,6 +8,7 @@ cloudwatch_agent:
   user: cwagent
 
 tuxedo_logs_path: /var/log/tuxedo
+tuxedo_log_rotation_config_path: /etc/logrotate.tuxedo.conf
 
 tuxedo_log_files:
   ewf:
