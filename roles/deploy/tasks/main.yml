@@ -67,13 +67,28 @@
     group: "{{ tuxedo_service_group }}"
     mode: 0755
 
-- name: "Create Tuxedo logs directory"
+- name: Create Tuxedo logs directory
   file:
     path: "{{ tuxedo_logs_path }}"
     owner: root
     group: "{{ tuxedo_service_group }}"
     mode: 0755
     state: directory
+
+- name: Create shared log rotation configuration for Tuxedo services
+  template:
+    src: templates/logrotate.tuxedo.conf.j2
+    dest: "{{ tuxedo_log_rotation_config_path }}"
+
+- name: Create system cron job for log rotation
+  cron:
+    name: Log rotation for Tuxedo services
+    weekday: "*"
+    minute: "*/15"
+    hour: "*"
+    user: "root"
+    job: "logrotate {{ tuxedo_log_rotation_config_path }}"
+    cron_file: /etc/crontab
 
 - include_tasks: deploy.yml
   loop: "{{ tuxedo_service_users }}"
