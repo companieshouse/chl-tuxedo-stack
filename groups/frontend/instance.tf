@@ -116,6 +116,38 @@ resource "aws_security_group" "common" {
     cidr_blocks = var.deployment_cidrs
   }
 
+  ingress {
+    description = "Allow connectivity from CHIPS for Tuxedo CEU services"
+    from_port   = 38000
+    to_port     = 38000
+    protocol    = "TCP"
+    cidr_blocks = [var.chips_cidr]
+  }
+
+  ingress {
+    description = "Allow connectivity from CHIPS for Tuxedo CHD services"
+    from_port   = 38100
+    to_port     = 38100
+    protocol    = "TCP"
+    cidr_blocks = [var.chips_cidr]
+  }
+
+  ingress {
+    description = "Allow connectivity from CHIPS for Tuxedo EWF services"
+    from_port   = 38200
+    to_port     = 38200
+    protocol    = "TCP"
+    cidr_blocks = [var.chips_cidr]
+  }
+
+  ingress {
+    description = "Allow connectivity from CHIPS for Tuxedo XML services"
+    from_port   = 38300
+    to_port     = 38300
+    protocol    = "TCP"
+    cidr_blocks = [var.chips_cidr]
+  }
+
   egress {
     description = "Allow outbound traffic"
     from_port   = 0
