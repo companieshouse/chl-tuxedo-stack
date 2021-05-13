@@ -20,6 +20,11 @@ variable "aws_account" {
   description = "The name of the AWS account; used in Vault path when looking up account identifier"
 }
 
+variable "chips_cidr" {
+  type        = string
+  description = "A string representing the CIDR range from which CHIPS instances will connect to Tuxedo services"
+}
+
 variable "default_log_retention_in_days" {
   type        = string
   description = "The default log retention period in days for CloudWatch log groups"
