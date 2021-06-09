@@ -82,6 +82,13 @@ variable "lvm_block_devices" {
   default = []
 }
 
+  # TODO Remove this; this was added for testing Tuxedo services in live using on-premise frontend services
+variable "on_premise_frontend_cidr" {
+  type        = string
+  description = "A string representing the CIDR range for on-premise frontend services"
+  default     = ""
+}
+
 variable "region" {
   type        = string
   description = "The AWS region in which resources will be administered"
