@@ -9,11 +9,6 @@
       - environment_name is defined and environment_name | trim | length > 0
       - application_artefact_path is defined and application_artefact_path | trim | length > 0
       - application_configs_path is defined and application_configs_path | trim | length > 0
-      - snmp_host_address is defined and snmp_host_address | trim | length > 0
-      - alpha_key_url is defined and alpha_key_url | trim | length > 0
-      - xbrl_validator_url is defined and xbrl_validator_url | trim | length > 0
-      - tnep_url is defined and tnep_url | trim | length > 0
-      - xslt_transformer_url is defined and xslt_transformer_url | trim | length > 0
     msg: "Required variable(s) empty or undefined"
 
 # The hostname is assumed to be in the format: frontend-tuxedo-<environment>-<instance-index>
