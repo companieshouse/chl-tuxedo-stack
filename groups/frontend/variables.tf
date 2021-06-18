@@ -185,14 +185,13 @@ variable "tuxedo_services" {
   description = "A map whose keys represent server-side tuxedo server groups with nested maps representing individual services by name key and port number value"
   default = {
     ceu = {
-      ch  = 5000,
-      img = 5001,
-      orc = 5002,
+      ois    = 5000,
+      search = 5001,
     },
     chd = {
-      ch  = 4000,
-      img = 4001,
-      orc = 4002,
+      ois    = 4000,
+      search = 4001,
+      chips  = 4002,
     },
     ewf = {
       ois    = 2000,
