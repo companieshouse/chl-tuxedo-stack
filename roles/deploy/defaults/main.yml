@@ -11,6 +11,58 @@ tuxedo_logs_path: /var/log/tuxedo
 tuxedo_log_rotation_config_path: /etc/logrotate.tuxedo.conf
 
 tuxedo_log_files:
+  ceu:
+    - file_pattern: CHG-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-chg-stdout
+    - file_pattern: CHG-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-chg-stderr
+    - file_pattern: DBG-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-dbg-stdout
+    - file_pattern: DBG-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-dbg-stderr
+    - file_pattern: CS-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-cs-stdout
+    - file_pattern: CS-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-cs-stderr
+    - file_pattern: Sys-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-sys-stdout
+    - file_pattern: Sys-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-sys-stderr
+    - file_pattern: ois-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-ngsrv-ois
+    - file_pattern: search-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-ngsrv-search
+    - file_pattern: ULOG*
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-ulog
+  chd:
+    - file_pattern: BE-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-be-stdout
+    - file_pattern: BE-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-be-stderr
+    - file_pattern: CHG-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-chg-stdout
+    - file_pattern: CHG-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-chg-stderr
+    - file_pattern: DBG-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-dbg-stdout
+    - file_pattern: DBG-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-dbg-stderr
+    - file_pattern: CS-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-cs-stdout
+    - file_pattern: CS-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-cs-stderr
+    - file_pattern: Sys-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-sys-stdout
+    - file_pattern: Sys-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-sys-stderr
+    - file_pattern: ois-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-chd-ngsrv-ois
+    - file_pattern: search-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-chd-ngsrv-search
+    - file_pattern: chips-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-chd-ngsrv-chips
+    - file_pattern: ULOG*
+      cloudwatch_log_group_name: frontend-tuxedo-chd-ulog
   ewf:
     - file_pattern: CHG-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-chg-stdout
@@ -44,8 +96,6 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-ewf-trxml-stdout
     - file_pattern: TRXML-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ewf-trxml-stderr
-    - file_pattern: ULOG*
-      cloudwatch_log_group_name: frontend-tuxedo-ewf-ulog
     - file_pattern: ois-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-ois
     - file_pattern: search-ngsrv.log
@@ -62,7 +112,8 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-trans
     - file_pattern: gen-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-ewf-ngsrv-gen
-
+    - file_pattern: ULOG*
+      cloudwatch_log_group_name: frontend-tuxedo-ewf-ulog
   xml:
     - file_pattern: CHG-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-chg-stdout
@@ -100,8 +151,6 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-xml-ixbrl-stdout
     - file_pattern: IXBRL-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-xml-ixbrl-stderr
-    - file_pattern: ULOG*
-      cloudwatch_log_group_name: frontend-tuxedo-xml-ulog
     - file_pattern: ois-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-ois
     - file_pattern: search-ngsrv.log
@@ -118,6 +167,8 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-trans
     - file_pattern: gen-ngsrv.log
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-gen
+    - file_pattern: ULOG*
+      cloudwatch_log_group_name: frontend-tuxedo-xml-ulog
 
 tuxedo_service_group: tuxedo
 tuxedo_service_users:
