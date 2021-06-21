@@ -35,10 +35,6 @@ tuxedo_log_files:
     - file_pattern: ULOG*
       cloudwatch_log_group_name: frontend-tuxedo-ceu-ulog
   chd:
-    - file_pattern: BE-stdout.txt
-      cloudwatch_log_group_name: frontend-tuxedo-chd-be-stdout
-    - file_pattern: BE-stderr.txt
-      cloudwatch_log_group_name: frontend-tuxedo-chd-be-stderr
     - file_pattern: CHG-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-chd-chg-stdout
     - file_pattern: CHG-stderr.txt
