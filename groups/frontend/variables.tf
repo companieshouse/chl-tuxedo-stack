@@ -116,6 +116,15 @@ variable "tuxedo_ngsrv_logs" {
   type        = map(list(any))
   description = "A map whose keys represent server-side tuxedo server groups with lists of objects representing nGsrv log files for each server group. Each object is expected to have at a minimum a 'name' key. A single log group will be created for each object. Optional 'log_retention_in_days' and 'kms_key_id' attributes can be set per-file to override the default values."
   default = {
+    ceu = [
+      { name: "ois" },
+      { name: "search" }
+    ]
+    chd = [
+      { name: "ois" },
+      { name: "search" },
+      { name: "chips" }
+    ]
     ewf = [
       { name: "ois" },
       { name: "search" },
@@ -143,6 +152,19 @@ variable "tuxedo_service_logs" {
   type        = map(list(any))
   description = "A map whose keys represent server-side tuxedo server groups with lists of objects representing user log files for each server group. Each object is expected to have at a minimum a 'name' key. Two CloudWatch log groups will be created for each object for standard output and standard error streams respectively. Optional 'log_retention_in_days' and 'kms_key_id' attributes can be set per-file to override the default values and will apply to both standard error and standard output log groups for that log."
   default = {
+    ceu = [
+      { name: "CHG" },
+      { name: "DBG" },
+      { name: "CS" },
+      { name: "Sys" }
+    ]
+    chd = [
+      { name: "BE" },
+      { name: "CHG" },
+      { name: "DBG" },
+      { name: "CS" },
+      { name: "Sys" }
+    ]
     ewf = [
       { name: "CHG" },
       { name: "BE" },
@@ -171,6 +193,12 @@ variable "tuxedo_user_logs" {
   type        = map(list(any))
   description = "A map whose keys represent server-side tuxedo server groups with lists of objects representing individual log files for each server group. Each object is expected to have at a minimum a 'name' key. A single CloudWatch log group will be created for each object. Optional 'log_retention_in_days' and 'kms_key_id' attributes can be set per-file to override the default values."
   default = {
+    ceu = [
+      { name: "ULOG" }
+    ]
+    chd = [
+      { name: "ULOG" }
+    ]
     ewf = [
       { name: "ULOG" }
     ]
