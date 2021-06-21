@@ -4,7 +4,7 @@ module "instance_profile" {
 
   cw_log_group_arns = flatten([
     [aws_cloudwatch_log_group.cloudwatch.arn],
-    [for tuxedo_server_type_key, tuxedo_services in var.tuxedo_services : "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:${var.service_subtype}-${var.service}-${tuxedo_server_type_key}-*:*"]
+    [for tuxedo_server_type_key, tuxedo_services in var.tuxedo_services : "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:${var.service_subtype}-${var.service}-${tuxedo_server_type_key}-*:*"]
   ])
 
   enable_SSM = true
