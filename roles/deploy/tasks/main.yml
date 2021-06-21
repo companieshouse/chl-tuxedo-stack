@@ -3,6 +3,10 @@
 - name: Set EC2 metadata facts
   amazon.aws.ec2_metadata_facts:
 
+- name: Set host facts for passwd database
+  getent:
+    database: passwd
+
 - name: Check required variables are set
   assert:
     that:
