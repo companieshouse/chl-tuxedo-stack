@@ -159,7 +159,6 @@ variable "tuxedo_service_logs" {
       { name: "Sys" }
     ]
     chd = [
-      { name: "BE" },
       { name: "CHG" },
       { name: "DBG" },
       { name: "CS" },
