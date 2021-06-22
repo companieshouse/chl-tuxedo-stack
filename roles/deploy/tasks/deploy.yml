@@ -21,12 +21,12 @@
     service_name: "{{ tuxedo_user }}"
     shared_memory_id: "{{ tuxedo_service_config[tuxedo_user].shared_memory_id }}"
     tuxedo_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_domain_id_suffix }}"
-    tuxedo_group_id: "{{ tuxedo_service_config[tuxedo_user].gid }}"
+    tuxedo_group_id: "{{ getent_passwd[tuxedo_user][getent_gid_index] }}"
     tuxedo_ipc_key: "{{ tuxedo_service_config[tuxedo_user].ipc_key }}"
     tuxedo_local_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_local_domain_suffix }}"
     tuxedo_logical_machine_id: "{{ tuxedo_user | upper }}_{{ tuxedo_logical_machine_id_suffix }}"
     tuxedo_machine_name: "{{ ansible_facts.hostname }}"
-    tuxedo_user_id: "{{ tuxedo_service_config[tuxedo_user].uid }}"
+    tuxedo_user_id: "{{ getent_passwd[tuxedo_user][getent_uid_index] }}"
   no_log: True
 
 - name: "{{ tuxedo_user }} : Create temporary directory for new {{ tuxedo_user }} deployment"
