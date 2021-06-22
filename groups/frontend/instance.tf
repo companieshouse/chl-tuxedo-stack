@@ -87,7 +87,7 @@ resource "aws_security_group" "services" {
 
   # TODO Remove this; this was added for testing Tuxedo services in live using on-premise frontend services
   dynamic "ingress" {
-    for_each = var.environment == "live" ? each.value : {}
+    for_each = var.environment == "live" || var.environment == "staging" ? each.value : {}
     iterator = service
     content {
       description = "Allow client requests from on-premise frontend web servers to ${service.key} service in ${each.key} server group"
