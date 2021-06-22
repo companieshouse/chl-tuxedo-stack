@@ -19,6 +19,7 @@
     private_host_address: "{{ inventory_hostname }}"
     private_host_local_domain_port: "{{ tuxedo_service_config[tuxedo_user].local_domain_port }}"
     service_name: "{{ tuxedo_user }}"
+    tuxedo_env_file_path: "/home/{{ tuxedo_user }}/deployment/config/envfile"
     shared_memory_id: "{{ tuxedo_service_config[tuxedo_user].shared_memory_id }}"
     tuxedo_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_domain_id_suffix }}"
     tuxedo_group_id: "{{ getent_passwd[tuxedo_user][getent_gid_index] }}"
@@ -89,7 +90,7 @@
 
 - name: "{{ tuxedo_user }} : Stop ngSrv services"
   become_user: "{{ tuxedo_user }}"
-  shell: "source $HOME/deployment/config/envfile && ngsrv.sh stop"
+  shell: "source {{ tuxedo_env_file_path }} && ngsrv.sh stop"
   args:
     executable: /bin/bash
   ignore_errors: yes
@@ -97,7 +98,7 @@
 
 - name: "{{ tuxedo_user }} : Stop Tuxedo services"
   become_user: "{{ tuxedo_user }}"
-  shell: "source $HOME/deployment/config/envfile && tmshutdown -y"
+  shell: "source {{ tuxedo_env_file_path }} && tmshutdown -y"
   args:
     executable: /bin/bash
   ignore_errors: yes
@@ -105,7 +106,7 @@
 
 - name: "{{ tuxedo_user }} : Clear IPC facilities"
   become_user: "{{ tuxedo_user }}"
-  shell: "source $HOME/deployment/config/envfile && zapipc"
+  shell: "source {{ tuxedo_env_file_path }} && zapipc"
   args:
     executable: /bin/bash
   when: current_deployment_files.stat.exists
@@ -126,7 +127,7 @@
 
 - name: "{{ tuxedo_user }} : Lint Tuxedo ubbconfig file after variable population"
   become_user: "{{ tuxedo_user }}"
-  shell: "source $HOME/deployment/config/envfile && tmloadcf -n ubbconfig"
+  shell: "source {{ tuxedo_env_file_path }} && tmloadcf -n ubbconfig"
   args:
     chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
     executable: /bin/bash
@@ -141,14 +142,14 @@
 
 - name: "{{ tuxedo_user }} : Generate Tuxedo binary tuxconfig file"
   become_user: "{{ tuxedo_user }}"
-  shell: "source $HOME/deployment/config/envfile && tmloadcf -y ubbconfig"
+  shell: "source {{ tuxedo_env_file_path }} && tmloadcf -y ubbconfig"
   args:
     chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
     executable: /bin/bash
 
 - name: "{{ tuxedo_user }} : Lint Tuxedo dmconfig file after variable population"
   become_user: "{{ tuxedo_user }}"
-  shell: "source $HOME/deployment/config/envfile && dmloadcf -n dmconfig"
+  shell: "source {{ tuxedo_env_file_path }} && dmloadcf -n dmconfig"
   args:
     chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
     executable: /bin/bash
@@ -163,7 +164,7 @@
 
 - name: "{{ tuxedo_user }} : Generate Tuxedo binary bdmconfig file"
   become_user: "{{ tuxedo_user }}"
-  shell: "source $HOME/deployment/config/envfile && dmloadcf -y dmconfig"
+  shell: "source {{ tuxedo_env_file_path }} && dmloadcf -y dmconfig"
   args:
     chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
     executable: /bin/bash
@@ -176,12 +177,12 @@
 
 - name: "{{ tuxedo_user }} : Start Tuxedo services"
   become_user: "{{ tuxedo_user }}"
-  shell: "source $HOME/deployment/config/envfile && tmboot -y"
+  shell: "source {{ tuxedo_env_file_path }} && tmboot -y"
   args:
     executable: /bin/bash
 
 - name: "{{ tuxedo_user }} : Start ngSrv services"
   become_user: "{{ tuxedo_user }}"
-  shell: "source $HOME/deployment/config/envfile && ngsrv.sh start"
+  shell: "source {{ tuxedo_env_file_path }} && ngsrv.sh start"
   args:
     executable: /bin/bash
