@@ -94,7 +94,7 @@ resource "aws_security_group" "services" {
       from_port   = service.value
       to_port     = service.value
       protocol    = "TCP"
-      cidr_blocks = [var.on_premise_frontend_cidr]
+      cidr_blocks = var.on_premise_frontend_cidrs
     }
   }
 
