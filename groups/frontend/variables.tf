@@ -154,13 +154,15 @@ variable "tuxedo_service_logs" {
   default = {
     ceu = [
       { name: "CHG" },
-      { name: "DBG" },
       { name: "CS" },
+      { name: "DBG" },
+      { name: "ES" },
       { name: "Sys" }
     ]
     chd = [
       { name: "CHG" },
       { name: "DBG" },
+      { name: "ES" },
       { name: "CS" },
       { name: "Sys" }
     ]
