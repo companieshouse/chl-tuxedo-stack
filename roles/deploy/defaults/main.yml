@@ -27,6 +27,10 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-ceu-cs-stdout
     - file_pattern: CS-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-ceu-cs-stderr
+    - file_pattern: ES-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-es-stdout
+    - file_pattern: ES-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-ceu-es-stderr
     - file_pattern: Sys-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-ceu-sys-stdout
     - file_pattern: Sys-stderr.txt
@@ -50,6 +54,10 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-chd-cs-stdout
     - file_pattern: CS-stderr.txt
       cloudwatch_log_group_name: frontend-tuxedo-chd-cs-stderr
+    - file_pattern: ES-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-es-stdout
+    - file_pattern: ES-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chd-es-stderr
     - file_pattern: Sys-stdout.txt
       cloudwatch_log_group_name: frontend-tuxedo-chd-sys-stdout
     - file_pattern: Sys-stderr.txt
