@@ -11,7 +11,7 @@
   assert:
     that:
       - environment_name is defined and environment_name | trim | length > 0
-      - application_artefact_path is defined and application_artefact_path | trim | length > 0
+      - application_artifact_path is defined and application_artifact_path | trim | length > 0
       - application_configs_path is defined and application_configs_path | trim | length > 0
     msg: "Required variable(s) empty or undefined"
 
@@ -45,22 +45,22 @@
     - tuxedo_logical_machine_id_suffix
     - tuxedo_local_domain_suffix
 
-- name: Create temporary directory for application artefact files
+- name: Create temporary directory for application artifact files
   tempfile:
     state: directory
-  register: application_artefact_files
+  register: application_artifact_files
 
 - name: Set permissions to allow service users to read from temporary directory
   file:
-    path: "{{ application_artefact_files.path }}"
+    path: "{{ application_artifact_files.path }}"
     owner: root
     group: "{{ tuxedo_service_group }}"
     mode: 0755
 
 - name: Deploy and extract application arterfact
   unarchive:
-    src: "{{ application_artefact_path }}"
-    dest: "{{ application_artefact_files.path }}"
+    src: "{{ application_artifact_path }}"
+    dest: "{{ application_artifact_files.path }}"
     remote_src: no
     owner: root
     group: "{{ tuxedo_service_group }}"
@@ -107,5 +107,5 @@
 
 - name: Remove temporary directories
   file:
-    path: "{{ application_artefact_files.path }}"
+    path: "{{ application_artifact_files.path }}"
     state: absent

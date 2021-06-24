@@ -36,9 +36,9 @@
     state: directory
   register: new_deployment_files
 
-- name: "{{ tuxedo_user }} : Copy application artefact files to temporary {{ tuxedo_user }} deployment directory"
+- name: "{{ tuxedo_user }} : Copy application artifact files to temporary {{ tuxedo_user }} deployment directory"
   become_user: "{{ tuxedo_user }}"
-  command: "cp -r {{ application_artefact_files.path }}/. {{ new_deployment_files.path }}"
+  command: "cp -r {{ application_artifact_files.path }}/. {{ new_deployment_files.path }}"
 
 - name: "{{ tuxedo_user }} : Create service logs directory"
   file:
@@ -69,7 +69,7 @@
   assert:
     that:
       - idx_configs.files | length > 0
-    msg: "idx files must exist for service {{ tuxedo_user }} in artefact subdirectory idx/{{ tuxedo_user }}"
+    msg: "idx files must exist for service {{ tuxedo_user }} in artifact subdirectory idx/{{ tuxedo_user }}"
 
 - name: "{{ tuxedo_user }} : Copy idx files for service to config directory"
   become_user: "{{ tuxedo_user }}"
