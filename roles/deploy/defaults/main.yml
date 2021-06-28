@@ -195,6 +195,7 @@ tuxedo_service_config:
     local_domain_port: "{{ tuxedo_service_domain_port_start + (0 * tuxedo_service_domain_port_increment) | int }}"
     shared_memory_id: 5000
     required_databases:
+      - ceu
       - chdata
   chd:
     ipc_key: "{{ tuxedo_service_ipc_key_start + (1 * tuxedo_service_ipc_key_increment) | int }}"
