@@ -178,12 +178,6 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-xml-ulog
 
 tuxedo_service_group: tuxedo
-tuxedo_service_users:
-  - ceu
-  - chd
-  - ewf
-  - xml
-
 tuxedo_service_ipc_key_start: 48000
 tuxedo_service_ipc_key_increment: 100
 tuxedo_service_domain_port_start: 38000
