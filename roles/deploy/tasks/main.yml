@@ -28,16 +28,6 @@
     cloudwatch_log_stream_name: "{{ ansible_ec2_instance_id }}_{{ ansible_ec2_hostname }}"
     region: "{{ ansible_ec2_instance_identity_document_region }}"
 
-- name: Create CloudWatch agent primary configuration file
-  template:
-    src: templates/cloudwatch-config.json.j2
-    dest: "{{ cloudwatch_agent.config_dir }}/cloudwatch-config.json"
-    trim_blocks: False
-
-- name: Start CloudWatch agent using primary configuration file
-  command:
-    cmd: "{{ cloudwatch_agent.path }} -a fetch-config -m ec2 -s -c file:{{ cloudwatch_agent.config_dir }}/cloudwatch-config.json"
-
 - name: Using constructed variable suffixes
   ansible.builtin.debug:
     var: "{{ item }}"
@@ -94,6 +84,16 @@
   loop: "{{ tuxedo_service_users }}"
   loop_control:
     loop_var: tuxedo_user
+
+- name: Create CloudWatch agent primary configuration file
+  template:
+    src: templates/cloudwatch-config.json.j2
+    dest: "{{ cloudwatch_agent.config_dir }}/cloudwatch-config.json"
+    trim_blocks: False
+
+- name: Start CloudWatch agent using primary configuration file
+  command:
+    cmd: "{{ cloudwatch_agent.path }} -a fetch-config -m ec2 -s -c file:{{ cloudwatch_agent.config_dir }}/cloudwatch-config.json"
 
 - name: Find application-specific CloudWatch configuration files
   find:
