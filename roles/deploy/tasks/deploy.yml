@@ -98,7 +98,7 @@
 
 - name: "{{ tuxedo_user }} : Stop Tuxedo services"
   become_user: "{{ tuxedo_user }}"
-  shell: "source {{ tuxedo_env_file_path }} && tmshutdown -y"
+  shell: "source {{ tuxedo_env_file_path }} && timeout -s 9 20 tmshutdown -y"
   args:
     executable: /bin/bash
   ignore_errors: yes
