@@ -150,7 +150,7 @@ resource "aws_security_group" "common" {
     from_port   = 38200
     to_port     = 38200
     protocol    = "TCP"
-    cidr_blocks = [var.chips_cidr]
+    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application.*.cidr_block])
   }
 
   ingress {
@@ -158,7 +158,7 @@ resource "aws_security_group" "common" {
     from_port   = 38300
     to_port     = 38300
     protocol    = "TCP"
-    cidr_blocks = [var.chips_cidr]
+    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application.*.cidr_block])
   }
 
   egress {
