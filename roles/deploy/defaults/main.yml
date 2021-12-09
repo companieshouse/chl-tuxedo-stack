@@ -176,6 +176,41 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-gen
     - file_pattern: ULOG*
       cloudwatch_log_group_name: frontend-tuxedo-xml-ulog
+  wck:
+    - file_pattern: CHG-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-chg-stdout
+    - file_pattern: CHG-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-chg-stderr
+    - file_pattern: DBG-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-dbg-stdout
+    - file_pattern: DBG-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-dbg-stderr
+    - file_pattern: CS-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-cs-stdout
+    - file_pattern: CS-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-cs-stderr
+    - file_pattern: ES-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-es-stdout
+    - file_pattern: ES-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-es-stderr
+    - file_pattern: Sys-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-sys-stdout
+    - file_pattern: Sys-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-wck-sys-stderr
+    - file_pattern: chd-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-wck-ngsrv-chd
+    - file_pattern: img-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-wck-ngsrv-img
+    - file_pattern: orc-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-wck-ngsrv-orc
+    - file_pattern: ehs-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-wck-ngsrv-ehs
+    - file_pattern: ref-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-wck-ngsrv-ref
+    - file_pattern: num-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-wck-ngsrv-num
+    - file_pattern: ULOG*
+      cloudwatch_log_group_name: frontend-tuxedo-wck-ulog
 
 tuxedo_service_group: tuxedo
 tuxedo_service_ipc_key_start: 48000
