@@ -54,7 +54,9 @@ Oracle Database configuration is retrieved from Hashicorp Vault for each item sp
 applications/heritage-<environment-name>-eu-west-2/tuxedo/database/<database-reference>
 ```
 
-The configuration is expected to take the form of a JSON object with the following parameters:
+Where `<environment-name>` is the actual name of the environment the configuration relates to and `<database-reference>` matches the `required_databases` list item name.
+
+The configuration is expected to be a JSON object with the following parameters:
 
 | Name                    | Default | Description                                                                               |
 |-------------------------|---------|-------------------------------------------------------------------------------------------|
