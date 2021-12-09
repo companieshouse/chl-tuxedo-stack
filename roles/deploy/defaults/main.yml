@@ -213,6 +213,13 @@ tuxedo_service_config:
       - bcd
       - chdata
       - xml
+  wck:
+    ipc_key: "{{ tuxedo_service_ipc_key_start + (4 * tuxedo_service_ipc_key_increment) | int }}"
+    local_domain_port: "{{ tuxedo_service_domain_port_start + (4 * tuxedo_service_domain_port_increment) | int }}"
+    shared_memory_id: 6000
+    required_databases:
+      - chdata
+      - wck
 
 deployment_dir: deployment
 rollback_dir: rollback
