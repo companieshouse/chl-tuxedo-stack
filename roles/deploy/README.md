@@ -9,9 +9,6 @@ This role implements a sequence of tasks required to deploy Tuxedo CHL services 
     * [Services][3]
     * [Databases][4]
     * [Logging][5]
-    * [Maintenance jobs][6]
-        * [Alerts][7]
-        * [Statistics][8]
 
 [1]: #overview
 [2]: #configuration
@@ -38,7 +35,7 @@ Each dictionary must include the following parameters unless marked _optional_:
 | `ipc_key`               |         | A unique IPC key value for Tuxedo services.                                           |
 | `local_domain_port`     |         | The port number to use for the local Tuxedo domain.                                   |
 | `shared_memory_id`      |         | A unique shared memory identifier used by Tuxedo servers and nGsrv processes for the exchange of mutex and logging information. |
-| `required_databases`    |         | A list of references to Oracle databases that are required by the parent set of Tuxedo services. Configuration for each entry will be retrieved from Hashicorp Vault and must exist when this role is executed (see [Database Configuration][3]). |
+| `required_databases`    |         | A list of references to Oracle databases that are required by the parent set of Tuxedo services. Configuration for each entry will be retrieved from Hashicorp Vault and must exist when this role is executed (see [Databases][4]). |
 
 A `tuxedo_service_users` variable is required when running this role and can be provided using the `-e|--extra-vars` option to the `ansible-playbook` command. This variable should be defined as a list of group names to be deployed, where each group name corresponds to a key in the `tuxedo_service_config` configuration variable discussed above. For example, to deploy only services belonging to the `ceu` group:
 
