@@ -145,6 +145,14 @@ variable "tuxedo_ngsrv_logs" {
       { name: "trans" },
       { name: "gen" }
     ]
+    wck = [
+      { name: "chd" },
+      { name: "img" },
+      { name: "orc" },
+      { name: "ehs" },
+      { name: "ref" },
+      { name: "num" }
+    ]
   }
 }
 
@@ -187,6 +195,13 @@ variable "tuxedo_service_logs" {
       { name: "TRXML" },
       { name: "IXBRL" }
     ]
+    wck = [
+      { name: "CHG" },
+      { name: "DBG" },
+      { name: "CS" },
+      { name: "ES" },
+      { name: "Sys" }
+    ]
   }
 }
 
@@ -204,6 +219,9 @@ variable "tuxedo_user_logs" {
       { name: "ULOG" }
     ]
     xml = [
+      { name: "ULOG" }
+    ]
+    wck = [
       { name: "ULOG" }
     ]
   }
@@ -242,6 +260,14 @@ variable "tuxedo_services" {
       trans  = 3006,
       gen    = 3007,
     },
+    wck = {
+      chd    = 6000,
+      img    = 6001,
+      orc    = 6002,
+      ehs    = 6003,
+      ref    = 6004,
+      num    = 6005,
+    }
   }
 }
 
