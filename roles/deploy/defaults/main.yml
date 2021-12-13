@@ -211,6 +211,27 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-wck-ngsrv-num
     - file_pattern: ULOG*
       cloudwatch_log_group_name: frontend-tuxedo-wck-ulog
+  chs:
+    - file_pattern: CHG-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chs-chg-stdout
+    - file_pattern: CHG-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chs-chg-stderr
+    - file_pattern: BE-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chs-be-stdout
+    - file_pattern: BE-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chs-be-stderr
+    - file_pattern: DBG-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chs-dbg-stdout
+    - file_pattern: DBG-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chs-dbg-stderr
+    - file_pattern: Sys-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chs-sys-stdout
+    - file_pattern: Sys-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-chs-sys-stderr
+    - file_pattern: auth-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-chs-ngsrv-auth
+    - file_pattern: ULOG*
+      cloudwatch_log_group_name: frontend-tuxedo-chs-ulog
 
 tuxedo_service_group: tuxedo
 tuxedo_service_ipc_key_start: 48000
@@ -255,6 +276,12 @@ tuxedo_service_config:
     required_databases:
       - chdata
       - wck
+  chs:
+    ipc_key: "{{ tuxedo_service_ipc_key_start + (5 * tuxedo_service_ipc_key_increment) | int }}"
+    local_domain_port: "{{ tuxedo_service_domain_port_start + (5 * tuxedo_service_domain_port_increment) | int }}"
+    shared_memory_id: 7000
+    required_databases:
+      - chdata
 
 deployment_dir: deployment
 rollback_dir: rollback
