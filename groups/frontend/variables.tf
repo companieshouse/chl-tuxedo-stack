@@ -153,6 +153,9 @@ variable "tuxedo_ngsrv_logs" {
       { name: "ref" },
       { name: "num" }
     ]
+    chs = [
+      { name: "auth" }
+    ]
   }
 }
 
@@ -202,6 +205,12 @@ variable "tuxedo_service_logs" {
       { name: "ES" },
       { name: "Sys" }
     ]
+    chs = [
+      { name: "CHG" },
+      { name: "BE" },
+      { name: "DBG" },
+      { name: "Sys" }
+    ]
   }
 }
 
@@ -224,6 +233,9 @@ variable "tuxedo_user_logs" {
     wck = [
       { name: "ULOG" }
     ]
+    chs = [
+      { name: "ULOG" }
+    ]
   }
 }
 
@@ -233,22 +245,22 @@ variable "tuxedo_services" {
   default = {
     ceu = {
       ois    = 5000,
-      search = 5001,
+      search = 5001
     },
     chd = {
       ois    = 4000,
       search = 4001,
-      chips  = 4002,
+      chips  = 4002
     },
     ewf = {
       ois    = 2000,
       search = 2001,
       chips  = 2002,
       ef     = 2003,
-      ixbrl  = 2004
+      ixbrl  = 2004,
       tnep   = 2005,
       trans  = 2006,
-      gen    = 2007,
+      gen    = 2007
     },
     xml = {
       ois    = 3000,
@@ -258,7 +270,7 @@ variable "tuxedo_services" {
       ixbrl  = 3004
       tnep   = 3005,
       trans  = 3006,
-      gen    = 3007,
+      gen    = 3007
     },
     wck = {
       chd    = 6000,
@@ -266,7 +278,10 @@ variable "tuxedo_services" {
       orc    = 6002,
       ehs    = 6003,
       ref    = 6004,
-      num    = 6005,
+      num    = 6005
+    }
+    chs = {
+      auth   = 7000
     }
   }
 }
