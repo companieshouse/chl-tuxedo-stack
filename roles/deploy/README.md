@@ -37,6 +37,28 @@ Each dictionary must include the following parameters unless marked _optional_:
 | `shared_memory_id`      |         | A unique shared memory identifier used by Tuxedo servers and nGsrv processes for the exchange of mutex and logging information. |
 | `required_databases`    |         | A list of references to Oracle databases that are required by the parent set of Tuxedo services. Configuration for each entry will be retrieved from Hashicorp Vault and must exist when this role is executed (see [Databases][4]). |
 
+An example configuration is provided below for two separate groups of Tuxedo services (`ewf` and `xml`):
+
+```yaml
+tuxedo_service_config:
+  ewf:
+    ipc_key: 100
+    local_domain_port: 10000
+    shared_memory_id: 1000
+    required_databases:
+      - bcd
+      - chdata
+      - ewf
+  xml:
+    ipc_key: 101
+    local_domain_port: 10001
+    shared_memory_id: 1001
+    required_databases:
+      - bcd
+      - chdata
+      - xml
+```
+
 A `tuxedo_service_users` variable is required when running this role and can be provided using the `-e|--extra-vars` option to the `ansible-playbook` command. This variable should be defined as a list of group names to be deployed, where each group name corresponds to a key in the `tuxedo_service_config` configuration variable discussed above. For example, to deploy only services belonging to the `ceu` group:
 
 ```shell
