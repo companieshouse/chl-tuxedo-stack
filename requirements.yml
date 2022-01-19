@@ -7,4 +7,5 @@ roles:
 
 collections:
 - name: amazon.aws
+- name: community.general
 - name: community.hashi_vault
