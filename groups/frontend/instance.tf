@@ -110,6 +110,18 @@ resource "aws_security_group" "services" {
     }
   }
 
+  dynamic "ingress" {
+    for_each = each.key == "chs" ? each.value : {}
+    iterator = service
+    content {
+      description = "Allow client requests from CHS services to ${service.key} service in ${each.key} server group"
+      from_port   = service.value
+      to_port     = service.value
+      protocol    = "TCP"
+      cidr_blocks = local.chs_application_cidrs
+    }
+  }
+
   tags = merge(local.common_tags, {
     Name             = "${each.key}-${local.common_resource_name}"
     TuxedoServerType = each.key
