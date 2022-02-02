@@ -14,6 +14,6 @@ data "vault_generic_secret" "tns_names" {
   path = "applications/${var.aws_account}-${var.region}/tuxedo/tnsnames"
 }
 
-data "vault_generic_secret" "chs_subnets" {
-  path = "aws-accounts/${var.environment}/vpc/subnets"
+data "vault_generic_secret" "chs_application_cidrs" {
+  path = "aws-accounts/network/${var.aws_account}/chs/application-subnets"
 }
