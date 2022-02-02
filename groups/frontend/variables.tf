@@ -25,6 +25,11 @@ variable "chips_cidr" {
   description = "A string representing the CIDR range from which CHIPS instances will connect to Tuxedo services"
 }
 
+variable "chs_application_cidrs" {
+    type        = list(string)
+    description = "A list of strings representing the CIDR ranges for CHS application services"
+}
+
 variable "default_log_retention_in_days" {
   type        = string
   description = "The default log retention period in days for CloudWatch log groups"
@@ -82,10 +87,10 @@ variable "lvm_block_devices" {
   default = []
 }
 
-  # TODO Remove this; this was added for testing Tuxedo services in live using on-premise frontend services
+# TODO Remove this; this was added for testing Tuxedo services in live using on-premise frontend services
 variable "on_premise_frontend_cidrs" {
   type        = list(string)
-  description = "A string representing the CIDR range for on-premise frontend services"
+  description = "A list of strings representing the CIDR ranges for on-premise frontend services"
   default     = []
 }
 
