@@ -68,4 +68,6 @@ locals {
   )
 
   logs_kms_key_id = data.vault_generic_secret.kms_keys.data["logs"]
+
+  chs_application_cidrs = values(jsondecode(data.vault_generic_secret.chs_subnets.data["applications"]))
 }

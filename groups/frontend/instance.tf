@@ -118,7 +118,7 @@ resource "aws_security_group" "services" {
       from_port   = service.value
       to_port     = service.value
       protocol    = "TCP"
-      cidr_blocks = var.chs_application_cidrs
+      cidr_blocks = local.chs_application_cidrs
     }
   }
 

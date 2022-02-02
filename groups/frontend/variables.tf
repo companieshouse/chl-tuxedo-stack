@@ -25,11 +25,6 @@ variable "chips_cidr" {
   description = "A string representing the CIDR range from which CHIPS instances will connect to Tuxedo services"
 }
 
-variable "chs_application_cidrs" {
-    type        = list(string)
-    description = "A list of strings representing the CIDR ranges for CHS application services"
-}
-
 variable "default_log_retention_in_days" {
   type        = string
   description = "The default log retention period in days for CloudWatch log groups"

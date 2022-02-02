@@ -13,3 +13,7 @@ data "vault_generic_secret" "security_kms_keys" {
 data "vault_generic_secret" "tns_names" {
   path = "applications/${var.aws_account}-${var.region}/tuxedo/tnsnames"
 }
+
+data "vault_generic_secret" "chs_subnets" {
+  path = "aws-accounts/${var.environment}/vpc/subnets"
+}
