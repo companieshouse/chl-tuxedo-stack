@@ -122,6 +122,18 @@ resource "aws_security_group" "services" {
     }
   }
 
+  dynamic "ingress" {
+    for_each = each.key == "ceu" && var.environment == "live" ? each.value : {}
+    iterator = service
+    content {
+      description = "Allow client requests from Live CEU frontend to ${service.key} service in ${each.key} server group"
+      from_port   = service.value
+      to_port     = service.value
+      protocol    = "TCP"
+      cidr_blocks = local.ceu_live_fe_application_cidrs
+    }
+  }
+
   tags = merge(local.common_tags, {
     Name             = "${each.key}-${local.common_resource_name}"
     TuxedoServerType = each.key

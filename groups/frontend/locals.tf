@@ -70,4 +70,6 @@ locals {
   logs_kms_key_id = data.vault_generic_secret.kms_keys.data["logs"]
 
   chs_application_cidrs = values(data.vault_generic_secret.chs_application_cidrs.data)
+
+  ceu_live_fe_application_cidrs = var.environment == "live" ? jsondecode(data.vault_generic_secret.ceu_live_fe_outputs[0].data["ceu-frontend-web-subnets-cidrs"]) : []
 }
