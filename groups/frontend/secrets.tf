@@ -17,3 +17,8 @@ data "vault_generic_secret" "tns_names" {
 data "vault_generic_secret" "chs_application_cidrs" {
   path = "aws-accounts/network/${var.aws_account}/chs/application-subnets"
 }
+
+data "vault_generic_secret" "ceu_live_fe_outputs" {
+  count = var.environment == "live" ? 1 : 0
+  path = "applications/pci-services-${var.region}/ceu/ceu-fe-outputs"
+}
