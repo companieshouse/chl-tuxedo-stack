@@ -233,7 +233,7 @@ resource "aws_instance" "frontend" {
 
   root_block_device {
     volume_size = var.root_volume_size
-    encrypted = true
+    encrypted   = true
   }
 
   tags = merge(local.common_tags ,{
