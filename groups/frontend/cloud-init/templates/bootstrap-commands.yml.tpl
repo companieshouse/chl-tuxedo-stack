@@ -1,3 +1,9 @@
+mounts:
+ - [ "ipo-file-svm-lif-be1.internal.ch:chd_image", "/home/scud/downloadchd/email", "nfs", "hard", "bg" ]
+ - [ "ipo-file-svm-lif-be1.internal.ch:chcc_email", "/home/scud/downloadceu/email", "nfs", "hard", "bg" ]
+ - [ "ipo-file-svm-lif-be1.internal.ch:wck_image", "/home/scud/downloadwck/email", "nfs", "hard", "bg" ]
+ - [ "ipo-file-svm-lif-be1.internal.ch:/ceu_post", "home/scud/downloadceu/post", "nfs", "hard", "bg" ]
+
 runcmd:
   - hostnamectl set-hostname ${instance_hostname}
   %{~ for block_device in lvm_block_devices ~}
