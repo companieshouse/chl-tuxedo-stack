@@ -1,0 +1,21 @@
+---
+
+- name: install nfs-utils
+  yum: name=nfs-utils state=latest
+  vars:
+    nfsmounts:
+      - {  path: "/home/scud/downloadchd/email", src: "ipo-file-svm-lif-be1.internal.ch:chd_image" }
+      - {  path: "/home/scud/downloadceu/email", src: "ipo-file-svm-lif-be1.internal.ch:chcc_email" }
+      - {  path: "/home/scud/downloadwck/email", src: "ipo-file-svm-lif-be1.internal.ch:wck_image" }
+      - {  path: "/home/scud/downloadceu/post", src: "ipo-file-svm-lif-be1.internal.ch:chcc_post" }
+
+- name: mount the nfsshare in client side
+  mount:
+    fstype: nfs
+    opts: hard,bg
+    dump: 0
+    passno: 0
+    state: mounted
+    src: "{{item.src}}"
+    path: "{{item.path}}"
+  with_items: "{{nfsmounts}}"
