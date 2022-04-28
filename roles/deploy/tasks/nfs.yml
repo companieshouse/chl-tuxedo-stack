@@ -1,7 +1,9 @@
 ---
 
-- name: install nfs-utils
-  yum: name=nfs-utils state=latest
+- name: Install nfs-utils
+  yum:
+    name: nfs-utils
+    state: latest
   vars:
     nfsmounts:
       - {path: "/home/scud/downloadchd/email", src: "ipo-file-svm-lif-be1.internal.ch:chd_image"}
