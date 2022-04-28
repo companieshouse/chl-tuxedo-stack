@@ -21,4 +21,4 @@
     state: mounted
     src: "{{item.src}}"
     path: "{{item.path}}"
-  with_items: "{{nfsmounts}}"
+  with_items: "{{ nfsmounts }}"
