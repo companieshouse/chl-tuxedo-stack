@@ -21,6 +21,6 @@
     dump: 0
     passno: 0
     state: mounted
-    src: "{{item.src}}"
-    path: "{{item.path}}"
+    src: "{{ item.src }}"
+    path: "{{ item.path }}"
   with_items: "{{ nfsmounts }}"
