@@ -1,0 +1,17 @@
+---
+
+nfsmounts:
+  - path: "/home/scud/downloadchd/email"
+    src: "ipo-file-svm-lif-be1.internal.ch:chd_image"
+  - path: "/home/scud/downloadceu/email"
+    src: "ipo-file-svm-lif-be1.internal.ch:chcc_email"
+  - path: "/home/scud/downloadwck/email"
+    src: "ipo-file-svm-lif-be1.internal.ch:wck_image"
+  - path: "/home/scud/downloadceu/post"
+    src: "ipo-file-svm-lif-be1.internal.ch:chcc_post"
+  - path: "/data1/apps/scud"
+    src: "ipo-file-svm-lif-be1.internal.ch:scanning"
+  - path: "/data1/home/scanning"
+    src: "ipo-file-svm-lif-be1.internal.ch:tiffexport"
+  - path: "/data1/image/scud"
+    src: "ipo-file-svm-lif-be1.internal.ch:tiffexport"
