@@ -1,11 +1,11 @@
 ---
 
-- name: Install nfs-utils
+- name: Install NFS tools
   yum:
     name: nfs-utils
     state: latest
 
-- name: mount the nfsshare in client side
+- name: Mount NFS shares
   mount:
     fstype: nfs
     opts: hard,bg
