@@ -9,9 +9,4 @@ filters:
   tag:Service: tuxedo
   tag:ServiceSubType: frontend
 
-keyed_groups:
-  - key: tags.Environment
-    prefix: tag_Environment_
-    separator: ""
-
 hostnames: private-ip-address
