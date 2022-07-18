@@ -81,7 +81,7 @@ resource "aws_security_group" "services" {
       from_port   = service.value
       to_port     = service.value
       protocol    = "TCP"
-      cidr_blocks = data.aws_subnet.web.*.cidr_block
+      cidr_blocks = data.aws_subnet.web[*].cidr_block
     }
   }
 
@@ -106,7 +106,7 @@ resource "aws_security_group" "services" {
       from_port   = service.value
       to_port     = service.value
       protocol    = "TCP"
-      cidr_blocks = data.aws_subnet.application.*.cidr_block
+      cidr_blocks = data.aws_subnet.application[*].cidr_block
     }
   }
 
@@ -174,7 +174,7 @@ resource "aws_security_group" "common" {
     from_port   = 38200
     to_port     = 38200
     protocol    = "TCP"
-    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application.*.cidr_block])
+    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application[*].cidr_block])
   }
 
   ingress {
@@ -182,7 +182,7 @@ resource "aws_security_group" "common" {
     from_port   = 38300
     to_port     = 38300
     protocol    = "TCP"
-    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application.*.cidr_block])
+    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application[*].cidr_block])
   }
 
   egress {
@@ -222,7 +222,7 @@ resource "aws_instance" "frontend" {
       encrypted   = block_device.value.ebs.encrypted
       iops        = block_device.value.ebs.iops
       snapshot_id = block_device.value.ebs.snapshot_id
-      volume_size = var.lvm_block_devices[index(var.lvm_block_devices.*.lvm_physical_volume_device_node, block_device.value.device_name)].aws_volume_size_gb
+      volume_size = var.lvm_block_devices[index(var.lvm_block_devices[*].lvm_physical_volume_device_node, block_device.value.device_name)].aws_volume_size_gb
       volume_type = block_device.value.ebs.volume_type
     }
   }
