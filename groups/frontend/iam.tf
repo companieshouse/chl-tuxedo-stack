@@ -1,6 +1,6 @@
 module "instance_profile" {
   source = "git@github.com:companieshouse/terraform-modules//aws/instance_profile?ref=tags/1.0.62"
-  name = "tuxedo-frontend-profile"
+  name   = "tuxedo-frontend-profile"
 
   cw_log_group_arns = flatten([
     [aws_cloudwatch_log_group.cloudwatch.arn],
@@ -12,4 +12,15 @@ module "instance_profile" {
     local.ssm_kms_key_id
   ]
   s3_buckets_write = [local.session_manager_bucket_name]
+
+  custom_statements = [
+    {
+      sid       = "CloudWatchMetricsWrite"
+      effect    = "Allow"
+      resources = ["*"]
+      actions = [
+        "cloudwatch:PutMetricData"
+      ]
+    }
+  ]
 }
