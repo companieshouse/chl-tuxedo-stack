@@ -1,0 +1,4 @@
+---
+
+cloudwatch_agent_overrides:
+  metrics_enabled: true
