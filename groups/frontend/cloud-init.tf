@@ -6,7 +6,7 @@ data "cloudinit_config" "config" {
 
   part {
     content_type = "text/cloud-config"
-    content = templatefile("${path.module}/cloud-init/templates/system-config.yml.tpl", {})
+    content      = templatefile("${path.module}/cloud-init/templates/system-config.yml.tpl", {})
   }
 
   part {
