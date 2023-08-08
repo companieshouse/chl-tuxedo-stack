@@ -213,8 +213,8 @@ resource "aws_instance" "frontend" {
 
   dynamic "ebs_block_device" {
     for_each = [
-      for block_device in data.aws_ami.chl_tuxedo.block_device_mappings :
-        block_device if block_device.device_name != data.aws_ami.chl_tuxedo.root_device_name
+      for block_device in data.aws_ami.chl_tuxedo.block_device_mappings : block_device
+      if block_device.device_name != data.aws_ami.chl_tuxedo.root_device_name
     ]
     iterator = block_device
     content {
