@@ -193,7 +193,7 @@ resource "aws_security_group" "common" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = merge(local.common_tags ,{
+  tags = merge(local.common_tags, {
     Name = "common-${local.common_resource_name}"
   })
 }
@@ -213,8 +213,8 @@ resource "aws_instance" "frontend" {
 
   dynamic "ebs_block_device" {
     for_each = [
-      for block_device in data.aws_ami.chl_tuxedo.block_device_mappings :
-        block_device if block_device.device_name != data.aws_ami.chl_tuxedo.root_device_name
+      for block_device in data.aws_ami.chl_tuxedo.block_device_mappings : block_device
+      if block_device.device_name != data.aws_ami.chl_tuxedo.root_device_name
     ]
     iterator = block_device
     content {
@@ -231,7 +231,7 @@ resource "aws_instance" "frontend" {
     volume_size = var.root_volume_size
   }
 
-  tags = merge(local.common_tags ,{
+  tags = merge(local.common_tags, {
     Name = "${var.service_subtype}-${var.service}-${var.environment}-${count.index + 1}"
   })
   volume_tags = local.common_tags
