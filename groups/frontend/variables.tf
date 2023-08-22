@@ -156,6 +156,9 @@ variable "tuxedo_ngsrv_logs" {
     chs = [
       { name: "auth" }
     ]
+    xml-sandpit = [
+      { name: "tnep" }
+    ]
   }
 }
 
@@ -211,6 +214,9 @@ variable "tuxedo_service_logs" {
       { name: "DBG" },
       { name: "Sys" }
     ]
+    xml-sandpit = [
+      { name: "VTNEP" }
+    ]
   }
 }
 
@@ -236,6 +242,9 @@ variable "tuxedo_user_logs" {
     chs = [
       { name = "ULOG" }
     ]
+    xml-sandpit = [
+      { name = "ULOG" }
+    ]
   }
 }
 
@@ -244,44 +253,47 @@ variable "tuxedo_services" {
   description = "A map whose keys represent server-side tuxedo server groups with nested maps representing individual services by name key and port number value"
   default = {
     ceu = {
-      ois    = 5000,
+      ois    = 5000
       search = 5001
     },
     chd = {
-      ois    = 4000,
-      search = 4001,
+      ois    = 4000
+      search = 4001
       chips  = 4002
     },
     ewf = {
-      ois    = 2000,
-      search = 2001,
-      chips  = 2002,
-      ef     = 2003,
-      ixbrl  = 2004,
-      tnep   = 2005,
-      trans  = 2006,
+      ois    = 2000
+      search = 2001
+      chips  = 2002
+      ef     = 2003
+      ixbrl  = 2004
+      tnep   = 2005
+      trans  = 2006
       gen    = 2007
     },
     xml = {
-      ois    = 3000,
-      search = 3001,
-      chips  = 3002,
-      ef     = 3003,
+      ois    = 3000
+      search = 3001
+      chips  = 3002
+      ef     = 3003
       ixbrl  = 3004
-      tnep   = 3005,
-      trans  = 3006,
+      tnep   = 3005
+      trans  = 3006
       gen    = 3007
     },
     wck = {
-      chd    = 6000,
-      img    = 6001,
-      orc    = 6002,
-      ehs    = 6003,
-      ref    = 6004,
+      chd    = 6000
+      img    = 6001
+      orc    = 6002
+      ehs    = 6003
+      ref    = 6004
       num    = 6005
     }
     chs = {
       auth   = 7000
+    }
+    xml-sandpit = {
+      tnep   = 8000
     }
   }
 }
