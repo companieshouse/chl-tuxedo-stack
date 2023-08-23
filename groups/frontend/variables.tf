@@ -281,18 +281,18 @@ variable "tuxedo_services" {
       gen    = 3007
     },
     wck = {
-      chd    = 6000
-      img    = 6001
-      orc    = 6002
-      ehs    = 6003
-      ref    = 6004
-      num    = 6005
+      chd = 6000
+      img = 6001
+      orc = 6002
+      ehs = 6003
+      ref = 6004
+      num = 6005
     }
     chs = {
-      auth   = 7000
+      auth = 7000
     }
     xml-sandpit = {
-      tnep   = 8000
+      tnep = 8000
     }
   }
 }
