@@ -46,7 +46,7 @@ resource "aws_lb_target_group" "frontend" {
     for service in local.tuxedo_services : "${service.tuxedo_service_key}.${service.tuxedo_server_type_key}" => service
   }
 
-  name        = "${each.value.tuxedo_service_key}-${each.value.tuxedo_server_type_key}-${var.service}-${var.environment}"
+  name        = "${replace(each.value.tuxedo_service_key, "/sandpit/", "sp")}-${each.value.tuxedo_server_type_key}-${var.service}-${var.environment}"
   port        = each.value.tuxedo_service_port
   protocol    = "TCP"
   target_type = "instance"
