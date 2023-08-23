@@ -233,6 +233,15 @@ tuxedo_log_files:
       cloudwatch_log_group_name: frontend-tuxedo-chs-ngsrv-auth
     - file_pattern: ULOG*
       cloudwatch_log_group_name: frontend-tuxedo-chs-ulog
+  xml-sandpit:
+    - file_pattern: VTNEP-stdout.txt
+      cloudwatch_log_group_name: frontend-tuxedo-xml-vtnep-stdout
+    - file_pattern: VTNEP-stderr.txt
+      cloudwatch_log_group_name: frontend-tuxedo-xml-vtnep-stderr
+    - file_pattern: tnep-ngsrv.log
+      cloudwatch_log_group_name: frontend-tuxedo-xml-ngsrv-tnep
+    - file_pattern: ULOG*
+      cloudwatch_log_group_name: frontend-tuxedo-xml-ulog
 
 tuxedo_service_group: tuxedo
 tuxedo_service_ipc_key_start: 48000
@@ -283,6 +292,10 @@ tuxedo_service_config:
     shared_memory_id: 7000
     required_databases:
       - chdata
+  xml-sandpit:
+    ipc_key: "{{ tuxedo_service_ipc_key_start + (6 * tuxedo_service_ipc_key_increment) | int }}"
+    local_domain_port: "{{ tuxedo_service_domain_port_start + (6 * tuxedo_service_domain_port_increment) | int }}"
+    shared_memory_id: 8000
 
 deployment_dir: deployment
 rollback_dir: rollback
