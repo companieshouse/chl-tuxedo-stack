@@ -14,6 +14,10 @@
   no_log: True
   loop: "{{ tuxedo_service_config[tuxedo_user].required_databases | default([]) }}"
 
+- name: Set Tuxedo ID prefix variable for template population
+  set_fact:
+    tuxedo_id_prefix: "{{ tuxedo_user | replace('-', '_') | replace('sandpit', 'sp') | upper }}"
+
 - name: Set additional variables for template population
   set_fact:
     private_host_address: "{{ inventory_hostname }}"
@@ -21,11 +25,11 @@
     service_name: "{{ tuxedo_user }}"
     tuxedo_env_file_path: "/home/{{ tuxedo_user }}/deployment/config/envfile"
     shared_memory_id: "{{ tuxedo_service_config[tuxedo_user].shared_memory_id }}"
-    tuxedo_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_domain_id_suffix }}"
+    tuxedo_domain_id: "{{ tuxedo_id_prefix }}_{{ tuxedo_domain_id_suffix }}"
     tuxedo_group_id: "{{ getent_passwd[tuxedo_user][getent_gid_index] }}"
     tuxedo_ipc_key: "{{ tuxedo_service_config[tuxedo_user].ipc_key }}"
-    tuxedo_local_domain_id: "{{ tuxedo_user | upper }}_{{ tuxedo_local_domain_suffix }}"
-    tuxedo_logical_machine_id: "{{ tuxedo_user | upper }}_{{ tuxedo_logical_machine_id_suffix }}"
+    tuxedo_local_domain_id: "{{ tuxedo_id_prefix }}_{{ tuxedo_local_domain_suffix }}"
+    tuxedo_logical_machine_id: "{{ tuxedo_id_prefix }}_{{ tuxedo_logical_machine_id_suffix }}"
     tuxedo_machine_name: "{{ ansible_facts.hostname }}"
     tuxedo_user_id: "{{ getent_passwd[tuxedo_user][getent_uid_index] }}"
   no_log: True
