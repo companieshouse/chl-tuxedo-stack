@@ -4,7 +4,7 @@
   set_fact:
     "{{ item }}_db_credentials": "{{ lookup('community.hashi_vault.hashi_vault', 'applications/heritage-{{ environment_name }}-eu-west-2/tuxedo/database/{{ item }}') }}"
   no_log: True
-  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases }}"
+  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases | default([]) }}"
 
 - name: Set database credential variables for template population
   set_fact:
@@ -12,7 +12,7 @@
     "{{ item }}_database_username": "{{ vars[item + '_db_credentials']['database_username'] }}"
     "{{ item }}_database_tns_name": "{{ vars[item + '_db_credentials']['database_tns_name'] }}"
   no_log: True
-  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases }}"
+  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases | default([]) }}"
 
 - name: Set additional variables for template population
   set_fact:
