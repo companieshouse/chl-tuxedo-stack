@@ -196,7 +196,6 @@ variable "tuxedo_service_logs" {
       { name: "DBG" },
       { name: "CS" },
       { name: "Sys" },
-      { name: "VXBRL" },
       { name: "VTNEP" },
       { name: "TRXML" },
       { name: "IXBRL" }
