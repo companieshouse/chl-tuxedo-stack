@@ -73,13 +73,13 @@ variable "lb_deletion_protection" {
 
 variable "lvm_block_devices" {
   type = list(object({
-    aws_volume_size_gb: string,
-    filesystem_resize_tool: string,
-    lvm_logical_volume_device_node: string,
-    lvm_physical_volume_device_node: string,
+    aws_volume_size_gb : string,
+    filesystem_resize_tool : string,
+    lvm_logical_volume_device_node : string,
+    lvm_physical_volume_device_node : string,
   }))
   description = "A list of objects representing LVM block devices; each LVM volume group is assumed to contain a single physical volume and each logical volume is assumed to belong to a single volume group; the filesystem for each logical volume will be expanded to use all available space within the volume group using the filesystem resize tool specified; block device configuration applies only on resource creation. Set the 'filesystem_resize_tool' and 'lvm_logical_volume_device_node' fields to empty strings if the block device contains no filesystem and should be excluded from the automatic filesystem resizing, such as when the block device represents a swap volume"
-  default = []
+  default     = []
 }
 
 # TODO Remove this; this was added for testing Tuxedo services in live using on-premise frontend services
@@ -117,47 +117,47 @@ variable "tuxedo_ngsrv_logs" {
   description = "A map whose keys represent server-side tuxedo server groups with lists of objects representing nGsrv log files for each server group. Each object is expected to have at a minimum a 'name' key. A single log group will be created for each object. Optional 'log_retention_in_days' and 'kms_key_id' attributes can be set per-file to override the default values."
   default = {
     ceu = [
-      { name: "ois" },
-      { name: "search" }
+      { name : "ois" },
+      { name : "search" }
     ]
     chd = [
-      { name: "ois" },
-      { name: "search" },
-      { name: "chips" }
+      { name : "ois" },
+      { name : "search" },
+      { name : "chips" }
     ]
     ewf = [
-      { name: "ois" },
-      { name: "search" },
-      { name: "chips" },
-      { name: "ef" },
-      { name: "ixbrl" },
-      { name: "tnep" },
-      { name: "trans" },
-      { name: "gen" }
+      { name : "ois" },
+      { name : "search" },
+      { name : "chips" },
+      { name : "ef" },
+      { name : "ixbrl" },
+      { name : "tnep" },
+      { name : "trans" },
+      { name : "gen" }
     ]
     xml = [
-      { name: "ois" },
-      { name: "search" },
-      { name: "chips" },
-      { name: "ef" },
-      { name: "ixbrl" },
-      { name: "tnep" },
-      { name: "trans" },
-      { name: "gen" }
+      { name : "ois" },
+      { name : "search" },
+      { name : "chips" },
+      { name : "ef" },
+      { name : "ixbrl" },
+      { name : "tnep" },
+      { name : "trans" },
+      { name : "gen" }
     ]
     wck = [
-      { name: "chd" },
-      { name: "img" },
-      { name: "orc" },
-      { name: "ehs" },
-      { name: "ref" },
-      { name: "num" }
+      { name : "chd" },
+      { name : "img" },
+      { name : "orc" },
+      { name : "ehs" },
+      { name : "ref" },
+      { name : "num" }
     ]
     chs = [
-      { name: "auth" }
+      { name : "auth" }
     ]
     xml-sandpit = [
-      { name: "tnep" }
+      { name : "tnep" }
     ]
   }
 }
@@ -167,54 +167,54 @@ variable "tuxedo_service_logs" {
   description = "A map whose keys represent server-side tuxedo server groups with lists of objects representing user log files for each server group. Each object is expected to have at a minimum a 'name' key. Two CloudWatch log groups will be created for each object for standard output and standard error streams respectively. Optional 'log_retention_in_days' and 'kms_key_id' attributes can be set per-file to override the default values and will apply to both standard error and standard output log groups for that log."
   default = {
     ceu = [
-      { name: "CHG" },
-      { name: "CS" },
-      { name: "DBG" },
-      { name: "ES" },
-      { name: "Sys" }
+      { name : "CHG" },
+      { name : "CS" },
+      { name : "DBG" },
+      { name : "ES" },
+      { name : "Sys" }
     ]
     chd = [
-      { name: "CHG" },
-      { name: "DBG" },
-      { name: "ES" },
-      { name: "CS" },
-      { name: "Sys" }
+      { name : "CHG" },
+      { name : "DBG" },
+      { name : "ES" },
+      { name : "CS" },
+      { name : "Sys" }
     ]
     ewf = [
-      { name: "CHG" },
-      { name: "BE" },
-      { name: "DBG" },
-      { name: "CS" },
-      { name: "Sys" },
-      { name: "VXBRL" },
-      { name: "VTNEP" },
-      { name: "TRXML" }
+      { name : "CHG" },
+      { name : "BE" },
+      { name : "DBG" },
+      { name : "CS" },
+      { name : "Sys" },
+      { name : "VXBRL" },
+      { name : "VTNEP" },
+      { name : "TRXML" }
     ]
     xml = [
-      { name: "CHG" },
-      { name: "BE" },
-      { name: "DBG" },
-      { name: "CS" },
-      { name: "Sys" },
-      { name: "VTNEP" },
-      { name: "TRXML" },
-      { name: "IXBRL" }
+      { name : "CHG" },
+      { name : "BE" },
+      { name : "DBG" },
+      { name : "CS" },
+      { name : "Sys" },
+      { name : "VTNEP" },
+      { name : "TRXML" },
+      { name : "IXBRL" }
     ]
     wck = [
-      { name: "CHG" },
-      { name: "DBG" },
-      { name: "CS" },
-      { name: "ES" },
-      { name: "Sys" }
+      { name : "CHG" },
+      { name : "DBG" },
+      { name : "CS" },
+      { name : "ES" },
+      { name : "Sys" }
     ]
     chs = [
-      { name: "CHG" },
-      { name: "BE" },
-      { name: "DBG" },
-      { name: "Sys" }
+      { name : "CHG" },
+      { name : "BE" },
+      { name : "DBG" },
+      { name : "Sys" }
     ]
     xml-sandpit = [
-      { name: "VTNEP" }
+      { name : "VTNEP" }
     ]
   }
 }
