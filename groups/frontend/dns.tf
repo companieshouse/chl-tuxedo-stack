@@ -1,8 +1,3 @@
-data "aws_route53_zone" "frontend" {
-  name   = local.dns_zone
-  vpc_id = data.aws_vpc.heritage.id
-}
-
 resource "aws_route53_record" "frontend" {
   zone_id = data.aws_route53_zone.frontend.zone_id
   name    = "${var.service_subtype}.${var.service}"

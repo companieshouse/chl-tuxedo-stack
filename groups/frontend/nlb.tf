@@ -1,22 +1,8 @@
-data "aws_network_interface" "nlb" {
-  for_each = data.aws_subnet_ids.application.ids
-
-  filter {
-    name   = "description"
-    values = ["ELB ${aws_lb.frontend.arn_suffix}"]
-  }
-
-  filter {
-    name   = "subnet-id"
-    values = [each.value]
-  }
-}
-
 resource "aws_lb" "frontend" {
   name               = local.common_resource_name
   internal           = true
   load_balancer_type = "network"
-  subnets            = data.aws_subnet_ids.application.ids
+  subnets            = data.aws_subnets.application.ids
 
   enable_cross_zone_load_balancing = true
   enable_deletion_protection       = var.lb_deletion_protection
