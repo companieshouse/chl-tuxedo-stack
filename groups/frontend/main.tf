@@ -1,11 +1,16 @@
-provider "aws" {
-  region  = var.region
-  version = ">= 3.0.0, < 4.0.0"
-}
-
 terraform {
-  backend "s3" {
+  required_version = ">= 1.3, < 1.4"
+
+  backend "s3" {}
+
+  required_providers {
+    aws = {
+      version = ">= 5.0, < 6.0"
+      source  = "hashicorp/aws"
+    }
   }
 }
 
-data "aws_caller_identity" "current" {}
+provider "aws" {
+  region = var.region
+}
