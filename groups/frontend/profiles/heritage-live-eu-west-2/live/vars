@@ -8,7 +8,7 @@ instance_type = "m5.large"
 
 root_volume_size = 100
 
-tuxedo_user_logs = {
+tuxedo_user_log_groups = {
   ceu = [
     { name = "ULOG", log_retention_in_days: 7 }
   ]
