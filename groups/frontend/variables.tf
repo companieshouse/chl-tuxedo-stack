@@ -150,14 +150,6 @@ variable "tuxedo_ngsrv_log_groups" {
       { name = "trans" },
       { name = "gen" }
     ]
-    wck = [
-      { name = "chd" },
-      { name = "img" },
-      { name = "orc" },
-      { name = "ehs" },
-      { name = "ref" },
-      { name = "num" }
-    ]
     chs = [
       { name = "auth" }
     ]
@@ -211,13 +203,6 @@ variable "tuxedo_service_log_groups" {
       { name = "TRXML" },
       { name = "IXBRL" }
     ]
-    wck = [
-      { name = "CHG" },
-      { name = "DBG" },
-      { name = "CS" },
-      { name = "ES" },
-      { name = "Sys" }
-    ]
     chs = [
       { name = "CHG" },
       { name = "BE" },
@@ -250,9 +235,6 @@ variable "tuxedo_user_log_groups" {
       { name = "ULOG" }
     ]
     xml = [
-      { name = "ULOG" }
-    ]
-    wck = [
       { name = "ULOG" }
     ]
     chs = [
@@ -297,14 +279,6 @@ variable "tuxedo_services" {
       trans  = 3006
       gen    = 3007
     },
-    wck = {
-      chd = 6000
-      img = 6001
-      orc = 6002
-      ehs = 6003
-      ref = 6004
-      num = 6005
-    }
     chs = {
       auth = 7000
     }
