@@ -100,11 +100,11 @@ resource "aws_security_group" "common" {
   vpc_id = data.aws_vpc.heritage.id
 
   ingress {
-    description = "Allow SSH connectivity for application deployments"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "TCP"
-    cidr_blocks = local.build_subnet_cidrs
+    description     = "Allow SSH connectivity for application deployments"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "TCP"
+    prefix_list_ids = [data.aws_ec2_managed_prefix_list.shared_services_management.id]
   }
 
   ingress {
