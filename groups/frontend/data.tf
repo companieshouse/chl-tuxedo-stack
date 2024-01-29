@@ -1,5 +1,9 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_ec2_managed_prefix_list" "shared_services_management" {
+  name = "shared-services-management-cidrs"
+}
+
 data "aws_route53_zone" "frontend" {
   name   = local.dns_zone
   vpc_id = data.aws_vpc.heritage.id
