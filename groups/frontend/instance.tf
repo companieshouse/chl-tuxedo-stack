@@ -104,7 +104,7 @@ resource "aws_security_group" "common" {
     from_port   = 22
     to_port     = 22
     protocol    = "TCP"
-    cidr_blocks = var.deployment_cidrs
+    cidr_blocks = local.build_subnet_cidrs
   }
 
   ingress {

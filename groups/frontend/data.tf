@@ -99,6 +99,10 @@ data "aws_network_interface" "nlb" {
   }
 }
 
+data "vault_generic_secret" "build_subnet_cidrs" {
+  path = "aws-accounts/shared-services/build_subnet_cidrs"
+}
+
 data "vault_generic_secret" "kms_keys" {
   path = "aws-accounts/${var.aws_account}/kms"
 }

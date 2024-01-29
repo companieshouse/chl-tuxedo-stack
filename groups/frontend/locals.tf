@@ -1,5 +1,6 @@
 locals {
   application_subnet_ids_by_az = values(zipmap(data.aws_subnet.application[*].availability_zone, data.aws_subnet.application[*].id))
+  build_subnet_cidrs           = values(data.vault_generic_secret.build_subnet_cidrs.data)
 
   common_tags = {
     Environment    = var.environment
