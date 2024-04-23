@@ -2,7 +2,7 @@
 
 - name: Retrieve service-specific database credentials from Hashicorp Vault
   set_fact:
-    "{{ item }}_db_credentials": "{{ lookup('community.hashi_vault.hashi_vault', 'applications/heritage-{{ environment_name }}-eu-west-2/tuxedo/database/{{ item }}') }}"
+    "{{ item }}_db_credentials": "{{ lookup('community.hashi_vault.hashi_vault', 'applications/heritage-{{ environment_name }}-eu-west-2/chl-tuxedo/database/{{ item }}') }}"
   no_log: True
   loop: "{{ tuxedo_service_config[tuxedo_user].required_databases | default([]) }}"
 
