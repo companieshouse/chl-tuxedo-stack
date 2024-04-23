@@ -70,7 +70,7 @@ ansible-playbook -i inventory --extra-vars='{"tuxedo_service_users": ["ceu"]}'
 Oracle Database configuration is retrieved from Hashicorp Vault for each item specified in the `required_databases` parameter list for a given set of Tuxedo services (see [Services][3]). For each item specified in this list, a Vault key is expected to be present at a path that uses the following pattern:
 
 ```
-applications/heritage-<environment-name>-eu-west-2/tuxedo/database/<database-reference>
+applications/heritage-<environment-name>-eu-west-2/chl-tuxedo/database/<database-reference>
 ```
 
 Where `<environment-name>` is the actual name of the environment the configuration relates to and `<database-reference>` matches the `required_databases` list item name.
