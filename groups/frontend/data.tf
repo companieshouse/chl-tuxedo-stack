@@ -116,7 +116,7 @@ data "vault_generic_secret" "security_kms_keys" {
 }
 
 data "vault_generic_secret" "tns_names" {
-  path = "applications/${var.aws_account}-${var.region}/tuxedo/tnsnames"
+  path = "applications/${var.aws_account}-${var.region}/chl-tuxedo/tnsnames"
 }
 
 data "vault_generic_secret" "chs_application_cidrs" {
