@@ -1,12 +1,12 @@
 ---
 
-- name: Retrieve service-specific database credentials from Hashicorp Vault
+- name: "{{ tuxedo_user }} : Retrieve service-specific database credentials from Hashicorp Vault"
   set_fact:
     "{{ item }}_db_credentials": "{{ lookup('community.hashi_vault.hashi_vault', 'applications/heritage-{{ environment_name }}-eu-west-2/chl-tuxedo/database/{{ item }}') }}"
   no_log: true
   loop: "{{ tuxedo_service_config[tuxedo_user].required_databases | default([]) }}"
 
-- name: Set database credential variables for template population
+- name: "{{ tuxedo_user }} : Set database credential variables for template population"
   set_fact:
     "{{ item }}_database_password": "{{ vars[item + '_db_credentials']['database_password'] }}"
     "{{ item }}_database_username": "{{ vars[item + '_db_credentials']['database_username'] }}"
@@ -14,11 +14,11 @@
   no_log: true
   loop: "{{ tuxedo_service_config[tuxedo_user].required_databases | default([]) }}"
 
-- name: Set Tuxedo ID prefix variable for template population
+- name: "{{ tuxedo_user }} : Set Tuxedo ID prefix variable for template population"
   set_fact:
     tuxedo_id_prefix: "{{ tuxedo_user | replace('-', '_') | replace('sandpit', 'sp') | upper }}"
 
-- name: Set additional variables for template population
+- name: "{{ tuxedo_user }} : Set additional variables for template population"
   set_fact:
     private_host_address: "{{ inventory_hostname }}"
     private_host_local_domain_port: "{{ tuxedo_service_config[tuxedo_user].local_domain_port }}"
