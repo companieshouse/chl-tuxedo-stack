@@ -14,5 +14,5 @@
   remote_user: centos
   become: true
   roles:
-    - role: systemd-journald
-    - role: deploy
+  - role: systemd-journald
+  - role: deploy
