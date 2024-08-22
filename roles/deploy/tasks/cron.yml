@@ -1,0 +1,37 @@
+---
+
+- name: Create system cron job for log rotation
+  ansible.builtin.cron:
+    name: Log rotation for Tuxedo services
+    weekday: "*"
+    minute: "*/15"
+    hour: "*"
+    user: "root"
+    job: "/sbin/logrotate {{ tuxedo_log_rotation_config_path }}"
+    cron_file: /etc/crontab
+
+- name: Create maintenance job for periodic mail spool truncation
+  ansible.builtin.cron:
+    name: Periodic mail spool truncation
+    special_time: weekly
+    user: root
+    job: /bin/truncate -s 0 /var/spool/mail/*
+    cron_file: /etc/cron.d/mail-spool
+
+- name: Configure recipient addresses for system cron jobs
+  community.general.cronvar:
+    name: MAILTO
+    value: root@localhost
+    cron_file: "{{ item }}"
+  loop:
+    - /etc/crontab
+    - /etc/cron.d/0hourly
+    - /etc/cron.d/clamav-update
+    - /etc/cron.d/log-rotation
+    - /etc/cron.d/mail-spool
+
+- name: Configure recipient addresses for system anacron jobs
+  ansible.builtin.lineinfile:
+    path: /etc/anacrontab
+    regexp: '^MAILTO='
+    line: MAILTO=root@localhost
