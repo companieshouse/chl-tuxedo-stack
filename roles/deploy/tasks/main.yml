@@ -112,9 +112,6 @@
 
 - name: Deploy Tuxedo services
   ansible.builtin.include_tasks: deploy.yml
-  loop: "{{ tuxedo_service_users }}"
-  loop_control:
-    loop_var: tuxedo_user
 
 - name: Find application-specific CloudWatch configuration files
   ansible.builtin.find:
