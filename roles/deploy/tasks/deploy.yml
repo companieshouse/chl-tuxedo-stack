@@ -1,115 +1,115 @@
 ---
 
-- name: "Retrieve service-specific database credentials from Hashicorp Vault : {{ tuxedo_user }}" # noqa var-naming[no-jinja]
+- name: "Retrieve service-specific database credentials from Hashicorp Vault : {{ tuxedo_service }}" # noqa var-naming[no-jinja]
   ansible.builtin.set_fact:
     "{{ item }}_db_credentials": "{{ lookup('community.hashi_vault.hashi_vault',
       'applications/heritage-{{ environment_name }}-eu-west-2/chl-tuxedo/database/{{ item }}') }}"
   no_log: true
-  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases | default([]) }}"
+  loop: "{{ tuxedo_service_config[tuxedo_service].required_databases | default([]) }}"
 
-- name: "Set database credential variables for template population : {{ tuxedo_user }}" # noqa var-naming[no-jinja]
+- name: "Set database credential variables for template population : {{ tuxedo_service }}" # noqa var-naming[no-jinja]
   ansible.builtin.set_fact:
     "{{ item }}_database_password": "{{ vars[item + '_db_credentials']['database_password'] }}"
     "{{ item }}_database_username": "{{ vars[item + '_db_credentials']['database_username'] }}"
     "{{ item }}_database_tns_name": "{{ vars[item + '_db_credentials']['database_tns_name'] }}"
   no_log: true
-  loop: "{{ tuxedo_service_config[tuxedo_user].required_databases | default([]) }}"
+  loop: "{{ tuxedo_service_config[tuxedo_service].required_databases | default([]) }}"
 
-- name: "Set Tuxedo ID prefix variable for template population : {{ tuxedo_user }}"
+- name: "Set Tuxedo ID prefix variable for template population : {{ tuxedo_service }}"
   ansible.builtin.set_fact:
-    tuxedo_id_prefix: "{{ tuxedo_user | replace('-', '_') | replace('sandpit', 'sp') | upper }}"
+    tuxedo_id_prefix: "{{ tuxedo_service | replace('-', '_') | replace('sandpit', 'sp') | upper }}"
 
-- name: "Set additional variables for template population : {{ tuxedo_user }}"
+- name: "Set additional variables for template population : {{ tuxedo_service }}"
   ansible.builtin.set_fact:
     private_host_address: "{{ inventory_hostname }}"
-    private_host_local_domain_port: "{{ tuxedo_service_config[tuxedo_user].local_domain_port }}"
-    service_name: "{{ tuxedo_user }}"
-    tuxedo_env_file_path: "/home/{{ tuxedo_user }}/deployment/config/envfile"
-    shared_memory_id: "{{ tuxedo_service_config[tuxedo_user].shared_memory_id }}"
+    private_host_local_domain_port: "{{ tuxedo_service_config[tuxedo_service].local_domain_port }}"
+    service_name: "{{ tuxedo_service }}"
+    tuxedo_env_file_path: "/home/{{ tuxedo_service }}/deployment/config/envfile"
+    shared_memory_id: "{{ tuxedo_service_config[tuxedo_service].shared_memory_id }}"
     tuxedo_domain_id: "{{ tuxedo_id_prefix }}_{{ tuxedo_domain_id_suffix }}"
-    tuxedo_group_id: "{{ getent_passwd[tuxedo_user][getent_gid_index] }}"
-    tuxedo_ipc_key: "{{ tuxedo_service_config[tuxedo_user].ipc_key }}"
+    tuxedo_group_id: "{{ getent_passwd[tuxedo_service][getent_gid_index] }}"
+    tuxedo_ipc_key: "{{ tuxedo_service_config[tuxedo_service].ipc_key }}"
     tuxedo_local_domain_id: "{{ tuxedo_id_prefix }}_{{ tuxedo_local_domain_suffix }}"
     tuxedo_logical_machine_id: "{{ tuxedo_id_prefix }}_{{ tuxedo_logical_machine_id_suffix }}"
     tuxedo_machine_name: "{{ ansible_facts.hostname }}"
-    tuxedo_user_id: "{{ getent_passwd[tuxedo_user][getent_uid_index] }}"
+    tuxedo_user_id: "{{ getent_passwd[tuxedo_service][getent_uid_index] }}"
   no_log: true
 
-- name: "Create temporary directory for new deployment : {{ tuxedo_user }}"
+- name: "Create temporary directory for new deployment : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.tempfile:
     state: directory
   register: new_deployment_files
   changed_when: true
 
-- name: "Copy application artifact files to temporary deployment directory : {{ tuxedo_user }}"
+- name: "Copy application artifact files to temporary deployment directory : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.command: "cp -r {{ application_artifact_files.path }}/. {{ new_deployment_files.path }}"
   changed_when: true
 
-- name: "Create Tuxedo service logs directory : {{ tuxedo_user }}"
+- name: "Create Tuxedo service logs directory : {{ tuxedo_service }}"
   ansible.builtin.file:
-    path: "{{ tuxedo_logs_path }}/{{ tuxedo_user }}"
-    owner: "{{ tuxedo_user }}"
-    group: "{{ tuxedo_user }}"
+    path: "{{ tuxedo_logs_path }}/{{ tuxedo_service }}"
+    owner: "{{ tuxedo_service }}"
+    group: "{{ tuxedo_service }}"
     mode: '0755'
     state: directory
 
-- name: "Create config directory : {{ tuxedo_user }}"
+- name: "Create config directory : {{ tuxedo_service }}"
   ansible.builtin.file:
     path: "{{ new_deployment_files.path }}/config"
-    owner: "{{ tuxedo_user }}"
-    group: "{{ tuxedo_user }}"
+    owner: "{{ tuxedo_service }}"
+    group: "{{ tuxedo_service }}"
     mode: '0755'
     state: directory
 
-- name: "Populate Tuxedo template config files : {{ tuxedo_user }}"
+- name: "Populate Tuxedo template config files : {{ tuxedo_service }}"
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "{{ new_deployment_files.path }}/config/{{ item | basename | replace('.j2', '') }}"
-    owner: "{{ tuxedo_user }}"
-    group: "{{ tuxedo_user }}"
+    owner: "{{ tuxedo_service }}"
+    group: "{{ tuxedo_service }}"
     mode: '0644'
   with_fileglob:
-    - "{{ application_configs_path }}/{{ tuxedo_user }}/*.j2"
+    - "{{ application_configs_path }}/{{ tuxedo_service }}/*.j2"
   no_log: true
 
-- name: "Find idx files for service : {{ tuxedo_user }}"
+- name: "Find idx files for service : {{ tuxedo_service }}"
   ansible.builtin.find:
-    paths: "{{ new_deployment_files.path }}/idx/{{ tuxedo_user }}"
+    paths: "{{ new_deployment_files.path }}/idx/{{ tuxedo_service }}"
     patterns: "*"
   register: idx_configs
 
-- name: "Assert idx files found : {{ tuxedo_user }}"
+- name: "Assert idx files found : {{ tuxedo_service }}"
   ansible.builtin.assert:
     that:
       - idx_configs.files | length > 0
-    msg: "idx files must exist for service {{ tuxedo_user }} in artifact subdirectory idx/{{ tuxedo_user }}"
+    msg: "idx files must exist for service {{ tuxedo_service }} in artifact subdirectory idx/{{ tuxedo_service }}"
 
-- name: "Copy idx files for service to config directory : {{ tuxedo_user }}"
+- name: "Copy idx files for service to config directory : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.command: "cp {{ item.path }} {{ new_deployment_files.path }}/config"
   loop: "{{ idx_configs.files }}"
   changed_when: true
 
-- name: "Set permissions for new deployment files : {{ tuxedo_user }}"
+- name: "Set permissions for new deployment files : {{ tuxedo_service }}"
   ansible.builtin.file:
     path: "{{ new_deployment_files.path }}"
-    owner: "{{ tuxedo_user }}"
-    group: "{{ tuxedo_user }}"
+    owner: "{{ tuxedo_service }}"
+    group: "{{ tuxedo_service }}"
     recurse: true
 
-- name: "Check state of current deployment directory : {{ tuxedo_user }}"
+- name: "Check state of current deployment directory : {{ tuxedo_service }}"
   ansible.builtin.stat:
-    path: "/home/{{ tuxedo_user }}/{{ deployment_dir }}"
+    path: "/home/{{ tuxedo_service }}/{{ deployment_dir }}"
   register: current_deployment_files
 
-- name: "Stop ngSrv services : {{ tuxedo_user }}" # noqa ignore-errors
+- name: "Stop ngSrv services : {{ tuxedo_service }}" # noqa ignore-errors
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.shell: "source {{ tuxedo_env_file_path }} && ngsrv.sh stop"
   args:
     executable: /bin/bash
@@ -117,9 +117,9 @@
   when: current_deployment_files.stat.exists
   changed_when: true
 
-- name: "Stop Tuxedo services : {{ tuxedo_user }}" # noqa ignore-errors
+- name: "Stop Tuxedo services : {{ tuxedo_service }}" # noqa ignore-errors
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.shell: "source {{ tuxedo_env_file_path }} && timeout -s 9 20 tmshutdown -y"
   args:
     executable: /bin/bash
@@ -127,105 +127,105 @@
   when: current_deployment_files.stat.exists
   changed_when: true
 
-- name: "Clear IPC facilities : {{ tuxedo_user }}"
+- name: "Clear IPC facilities : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.shell: "source {{ tuxedo_env_file_path }} && zapipc"
   args:
     executable: /bin/bash
   when: current_deployment_files.stat.exists
   changed_when: true
 
-- name: "Remove rollback directory if present : {{ tuxedo_user }}"
+- name: "Remove rollback directory if present : {{ tuxedo_service }}"
   ansible.builtin.file:
-    path: "/home/{{ tuxedo_user }}/{{ rollback_dir }}"
+    path: "/home/{{ tuxedo_service }}/{{ rollback_dir }}"
     state: absent
 
-- name: "Backup current deployment directory if one exists : {{ tuxedo_user }}"
+- name: "Backup current deployment directory if one exists : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
-  ansible.builtin.command: "mv /home/{{ tuxedo_user }}/{{ deployment_dir }} /home/{{ tuxedo_user }}/{{ rollback_dir }}"
+  become_user: "{{ tuxedo_service }}"
+  ansible.builtin.command: "mv /home/{{ tuxedo_service }}/{{ deployment_dir }} /home/{{ tuxedo_service }}/{{ rollback_dir }}"
   when: current_deployment_files.stat.exists
   changed_when: true
 
-- name: "Install new deployment files : {{ tuxedo_user }}"
+- name: "Install new deployment files : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
-  ansible.builtin.command: "mv {{ new_deployment_files.path }} /home/{{ tuxedo_user }}/{{ deployment_dir }}"
+  become_user: "{{ tuxedo_service }}"
+  ansible.builtin.command: "mv {{ new_deployment_files.path }} /home/{{ tuxedo_service }}/{{ deployment_dir }}"
   changed_when: true
 
-- name: "Lint Tuxedo ubbconfig file after variable population : {{ tuxedo_user }}"
+- name: "Lint Tuxedo ubbconfig file after variable population : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.shell: "source {{ tuxedo_env_file_path }} && tmloadcf -n ubbconfig"
   args:
-    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    chdir: "/home/{{ tuxedo_service }}/{{ deployment_dir }}/config"
     executable: /bin/bash
   register: ubbconfig_lint
   changed_when: false
 
-- name: "Assert Tuxedo ubbconfig lint success : {{ tuxedo_user }}"
+- name: "Assert Tuxedo ubbconfig lint success : {{ tuxedo_service }}"
   ansible.builtin.assert:
     that:
       - ubbconfig_lint.rc == 0
     fail_msg: "Tuxedo ubbconfig file failed lint check"
     success_msg: "Tuxedo ubbconfig file passed lint check"
 
-- name: "Generate Tuxedo binary tuxconfig file : {{ tuxedo_user }}"
+- name: "Generate Tuxedo binary tuxconfig file : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.shell: "source {{ tuxedo_env_file_path }} && tmloadcf -y ubbconfig"
   args:
-    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    chdir: "/home/{{ tuxedo_service }}/{{ deployment_dir }}/config"
     executable: /bin/bash
   changed_when: true
 
-- name: "Lint Tuxedo dmconfig file after variable population : {{ tuxedo_user }}"
+- name: "Lint Tuxedo dmconfig file after variable population : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.shell: "source {{ tuxedo_env_file_path }} && dmloadcf -n dmconfig"
   args:
-    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    chdir: "/home/{{ tuxedo_service }}/{{ deployment_dir }}/config"
     executable: /bin/bash
   register: dmconfig_lint
   changed_when: false
 
-- name: "Assert Tuxedo dmconfig lint success : {{ tuxedo_user }}"
+- name: "Assert Tuxedo dmconfig lint success : {{ tuxedo_service }}"
   ansible.builtin.assert:
     that:
       - dmconfig_lint.rc == 0
     fail_msg: "Tuxedo dmconfig file failed lint check"
     success_msg: "Tuxedo dmconfig file passed lint check"
 
-- name: "Generate Tuxedo binary bdmconfig file : {{ tuxedo_user }}"
+- name: "Generate Tuxedo binary bdmconfig file : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.shell: "source {{ tuxedo_env_file_path }} && dmloadcf -y dmconfig"
   args:
-    chdir: "/home/{{ tuxedo_user }}/{{ deployment_dir }}/config"
+    chdir: "/home/{{ tuxedo_service }}/{{ deployment_dir }}/config"
     executable: /bin/bash
   changed_when: true
 
-- name: "Create CloudWatch agent configuration file for Tuxedo service group : {{ tuxedo_user }}"
+- name: "Create CloudWatch agent configuration file for Tuxedo service group : {{ tuxedo_service }}"
   ansible.builtin.template:
     src: templates/cloudwatch-config-service.json.j2
-    dest: "{{ cloudwatch_agent.config_dir }}/cloudwatch-config-{{ tuxedo_user }}.json"
+    dest: "{{ cloudwatch_agent.config_dir }}/cloudwatch-config-{{ tuxedo_service }}.json"
     owner: cwagent
     group: cwagent
     mode: '0644'
     trim_blocks: false
 
-- name: "Start Tuxedo services : {{ tuxedo_user }}"
+- name: "Start Tuxedo services : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.shell: "source {{ tuxedo_env_file_path }} && tmboot -y"
   args:
     executable: /bin/bash
   changed_when: true
 
-- name: "Start ngSrv services : {{ tuxedo_user }}"
+- name: "Start ngSrv services : {{ tuxedo_service }}"
   become: true
-  become_user: "{{ tuxedo_user }}"
+  become_user: "{{ tuxedo_service }}"
   ansible.builtin.shell: "source {{ tuxedo_env_file_path }} && ngsrv.sh start"
   args:
     executable: /bin/bash

@@ -59,12 +59,6 @@ tuxedo_service_config:
       - xml
 ```
 
-A `tuxedo_service_users` variable is required when running this role and can be provided using the `-e|--extra-vars` option to the `ansible-playbook` command. This variable should be defined as a list of group names to be deployed, where each group name corresponds to a key in the `tuxedo_service_config` configuration variable discussed above. For example, to deploy only services belonging to the `ceu` group:
-
-```shell
-ansible-playbook -i inventory --extra-vars='{"tuxedo_service_users": ["ceu"]}'
-```
-
 ### Databases
 
 Oracle Database configuration is retrieved from Hashicorp Vault for each item specified in the `required_databases` parameter list for a given set of Tuxedo services (see [Services][3]). For each item specified in this list, a Vault key is expected to be present at a path that uses the following pattern:
