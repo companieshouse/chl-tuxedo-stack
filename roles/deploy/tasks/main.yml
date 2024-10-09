@@ -16,7 +16,6 @@
       - application_configs_path is defined and application_configs_path | trim | length > 0
     msg: "Required variable(s) empty or undefined"
 
-
 - name: Set common Tuxedo fact for domain suffix
   ansible.builtin.set_fact:
     tuxedo_common_suffix: "{{ ansible_facts.hostname
@@ -109,6 +108,9 @@
   ansible.builtin.command: "restorecon -irv /opt/aws/amazon-cloudwatch-agent/logs"
   register: cloudwatch_logs_selinux_context
   changed_when: cloudwatch_logs_selinux_context.stdout != ""
+
+- name: Install additional tooling
+  ansible.builtin.import_tasks: tools.yml
 
 - name: Deploy Tuxedo services
   ansible.builtin.include_tasks: deploy.yml

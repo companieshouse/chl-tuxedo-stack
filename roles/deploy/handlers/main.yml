@@ -1,0 +1,7 @@
+---
+
+- name: Restart Postfix service
+  ansible.builtin.systemd:
+    name: postfix
+    state: restarted
+    enabled: true
