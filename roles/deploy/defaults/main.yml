@@ -13,6 +13,13 @@ getent_uid_index: 1
 
 postfix_config_path: /etc/postfix/main.cf
 
+postfix_config:
+  mydomain: companieshouse.gov.uk
+  myorigin: $mydomain
+  relayhost: smtp-outbound.sharedservices.aws.internal
+  inet_interfaces: all
+  inet_protocols: ipv4
+
 tuxedo_logs_path: /var/log/tuxedo
 tuxedo_log_rotation_config_path: /etc/logrotate.tuxedo.conf
 
