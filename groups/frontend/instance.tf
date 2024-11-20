@@ -118,8 +118,8 @@ resource "aws_vpc_security_group_ingress_rule" "on_prem_chips_ingress" {
 }
 
 # TODO Remove after confirming on-prem frontend connectivity to Tuxedo services no longer required
-resource "aws_vpc_security_group_ingress_rule" "on_prem_frontend_ingress" {
-  for_each = local.on_prem_frontend_ingress
+resource "aws_vpc_security_group_ingress_rule" "on_prem_frontend_ingress_rules" {
+  for_each = local.on_prem_frontend_ingress_rules
 
   security_group_id = aws_security_group.services[each.value.group].id
   description       = "Allow client requests from Live CEU frontend to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"

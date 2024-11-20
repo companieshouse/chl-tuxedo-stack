@@ -105,7 +105,7 @@ locals {
     }
   ]...)
 
-  on_prem_frontend_ingress = var.environment == "development" ? {} : merge([
+  on_prem_frontend_ingress_rules = var.environment == "development" ? {} : merge([
     for cidr_block in var.on_premise_frontend_cidrs : {
       for service_and_group_name, config in local.all_services : "${service_and_group_name}-${cidr_block}" => merge(config, { cidr_ipv4 = cidr_block })
     }
