@@ -286,7 +286,7 @@ variable "tuxedo_services" {
 
 variable "tuxedo_domains" {
   type        = map(number)
-  description = "A map whose keys represent Tuxedo service domains and their associated port numbers."
+  description = "A map whose keys represent Tuxedo service domains and whose values represent their associated port numbers."
   default = {
     ceu = 38000
     chd = 38100
