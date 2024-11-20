@@ -22,7 +22,7 @@ variable "aws_account" {
 
 variable "chips_cidr" {
   type        = string
-  description = "A string representing the IPv4 CIDR address from which CHIPS instances will connect to Tuxedo services."
+  description = "A string representing the IPv4 CIDR address from which on-premise CHIPS instances will connect to Tuxedo services."
 }
 
 variable "default_log_retention_in_days" {
@@ -243,7 +243,7 @@ variable "tuxedo_user_log_groups" {
 
 variable "tuxedo_services" {
   type        = map(map(number))
-  description = "A map whose keys represent Tuxedo service groups and associated port numbers."
+  description = "A map whose keys represent Tuxedo service groups and whose nested keys represent nGsrv servers and their associated port numbers."
   default = {
     ceu = {
       ois    = 5000
@@ -280,6 +280,18 @@ variable "tuxedo_services" {
     xml-sandpit = {
       tnep = 8000
     }
+  }
+}
+
+
+variable "tuxedo_domains" {
+  type        = map(number)
+  description = "A map whose keys represent Tuxedo service domains and their associated port numbers."
+  default = {
+    ceu = 38000
+    chd = 38100
+    ewf = 38200
+    xml = 38300
   }
 }
 

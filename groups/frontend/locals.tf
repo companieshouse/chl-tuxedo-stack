@@ -67,6 +67,72 @@ locals {
     local.tuxedo_user_log_groups
   )
 
+  chips_ingress_rules = flatten([
+    for service_name, port_number in var.tuxedo_domains : [
+      for cidr_block in data.aws_subnet.application[*].cidr_block : {
+        service   = service_name
+        port      = port_number
+        cidr_ipv4 = cidr_block
+      }
+    ]
+  ])
+
+  all_services = merge([
+    for server_group, group_config in var.tuxedo_services : {
+      for service_name, port_number in group_config : "${service_name}-${server_group}" => {
+        service = service_name
+        group   = server_group
+        port    = port_number
+      }
+    }
+  ]...)
+
+  lb_health_check_ingress_rules = merge([
+    for cidr_block in formatlist("%s/32", [for eni in data.aws_network_interface.nlb : eni.private_ip]) : {
+      for service_and_group_name, config in local.all_services : "${service_and_group_name}-${cidr_block}" => merge(config, { cidr_ipv4 = cidr_block })
+    }
+  ]...)
+
+  frontend_web_ingress_rules = merge([
+    for cidr_block in data.aws_subnet.web[*].cidr_block : {
+      for service_and_group_name, config in local.all_services : "${service_and_group_name}-${cidr_block}" => merge(config, { cidr_ipv4 = cidr_block })
+    }
+  ]...)
+
+  backend_ingress_rules = merge([
+    for cidr_block in data.aws_subnet.application[*].cidr_block : {
+      for service_and_group_name, config in local.all_services : "${service_and_group_name}-${cidr_block}" => merge(config, { cidr_ipv4 = cidr_block })
+    }
+  ]...)
+
+  on_prem_frontend_ingress = var.environment == "development" ? {} : merge([
+    for cidr_block in var.on_premise_frontend_cidrs : {
+      for service_and_group_name, config in local.all_services : "${service_and_group_name}-${cidr_block}" => merge(config, { cidr_ipv4 = cidr_block })
+    }
+  ]...)
+
+  chs_ingress_rules = merge([
+    for cidr_block in nonsensitive(local.chs_application_cidrs) : {
+      for service_name, port_number in var.tuxedo_services["chs"] : "${service_name}-chs-${cidr_block}" => {
+        service   = service_name
+        group     = "chs"
+        port      = port_number
+        cidr_ipv4 = cidr_block
+      }
+    }
+  ]...)
+
+  ceu_ingress_rules = var.environment != "live" ? {} : merge([
+    for cidr_block in nonsensitive(local.ceu_live_fe_application_cidrs) : {
+      for service_name, port_number in var.tuxedo_services["ceu"] : "${service_name}-ceu-${cidr_block}" => {
+        service   = service_name
+        group     = "ceu"
+        port      = port_number
+        cidr_ipv4 = cidr_block
+      }
+    }
+  ]...)
+
   logs_kms_key_id = data.vault_generic_secret.kms_keys.data["logs"]
 
   chs_application_cidrs = values(data.vault_generic_secret.chs_application_cidrs.data)
