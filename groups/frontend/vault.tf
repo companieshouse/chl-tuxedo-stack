@@ -1,1 +1,1 @@
-vault-providers/approle
+vault-providers/userpass
