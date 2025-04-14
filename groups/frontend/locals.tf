@@ -87,12 +87,6 @@ locals {
     }
   ]...)
 
-  lb_health_check_ingress_rules = merge([
-    for cidr_block in formatlist("%s/32", [for eni in data.aws_network_interface.nlb : eni.private_ip]) : {
-      for service_and_group_name, config in local.all_services : "${service_and_group_name}-${cidr_block}" => merge(config, { cidr_ipv4 = cidr_block })
-    }
-  ]...)
-
   frontend_web_ingress_rules = merge([
     for cidr_block in data.aws_subnet.web[*].cidr_block : {
       for service_and_group_name, config in local.all_services : "${service_and_group_name}-${cidr_block}" => merge(config, { cidr_ipv4 = cidr_block })

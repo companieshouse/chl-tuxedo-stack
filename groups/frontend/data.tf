@@ -89,20 +89,6 @@ data "cloudinit_config" "config" {
   }
 }
 
-data "aws_network_interface" "nlb" {
-  for_each = toset(data.aws_subnets.application.ids)
-
-  filter {
-    name   = "description"
-    values = ["ELB ${aws_lb.frontend.arn_suffix}"]
-  }
-
-  filter {
-    name   = "subnet-id"
-    values = [each.value]
-  }
-}
-
 data "vault_generic_secret" "kms_keys" {
   path = "aws-accounts/${var.aws_account}/kms"
 }
