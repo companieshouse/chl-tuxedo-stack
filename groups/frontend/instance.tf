@@ -8,85 +8,11 @@ resource "aws_key_pair" "master" {
   public_key = var.ssh_master_public_key
 }
 
-# Individual security groups for Tuxedo server types (i.e. ceu, chd, ewf, xml)
 resource "aws_security_group" "services" {
   for_each = var.tuxedo_services
 
   name   = "${each.key}-${local.common_resource_name}"
   vpc_id = data.aws_vpc.heritage.id
-
-  dynamic "ingress" {
-    for_each = each.value
-    iterator = service
-    content {
-      description = "Allow health check requests from network load balancer to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = formatlist("%s/32", [for eni in data.aws_network_interface.nlb : eni.private_ip])
-    }
-  }
-
-  dynamic "ingress" {
-    for_each = each.value
-    iterator = service
-    content {
-      description = "Allow client requests from frontend web servers to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = data.aws_subnet.web[*].cidr_block
-    }
-  }
-
-  # TODO Remove this; this was added for testing Tuxedo services in live using on-premise frontend services
-  dynamic "ingress" {
-    for_each = var.environment == "live" || var.environment == "staging" ? each.value : {}
-    iterator = service
-    content {
-      description = "Allow client requests from on-premise frontend web servers to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = var.on_premise_frontend_cidrs
-    }
-  }
-
-  dynamic "ingress" {
-    for_each = each.value
-    iterator = service
-    content {
-      description = "Allow client requests from backend servers to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = data.aws_subnet.application[*].cidr_block
-    }
-  }
-
-  dynamic "ingress" {
-    for_each = each.key == "chs" ? each.value : {}
-    iterator = service
-    content {
-      description = "Allow client requests from CHS services to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = local.chs_application_cidrs
-    }
-  }
-
-  dynamic "ingress" {
-    for_each = each.key == "ceu" && var.environment == "live" ? each.value : {}
-    iterator = service
-    content {
-      description = "Allow client requests from Live CEU frontend to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = local.ceu_live_fe_application_cidrs
-    }
-  }
 
   tags = merge(local.common_tags, {
     Name             = "${each.key}-${local.common_resource_name}"
@@ -94,62 +20,120 @@ resource "aws_security_group" "services" {
   })
 }
 
-# Single security group for common rules
+resource "aws_vpc_security_group_ingress_rule" "lb_health_check_ingress" {
+  for_each = local.lb_health_check_ingress_rules
+
+  security_group_id = aws_security_group.services[each.value.group].id
+  description       = "Allow health check requests from network load balancer to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
+  cidr_ipv4         = each.value.cidr_ipv4
+  from_port         = each.value.port
+  to_port           = each.value.port
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "frontend_web_ingress" {
+  for_each = local.frontend_web_ingress_rules
+
+  security_group_id = aws_security_group.services[each.value.group].id
+  description       = "Allow client requests from frontend web servers to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
+  cidr_ipv4         = each.value.cidr_ipv4
+  from_port         = each.value.port
+  to_port           = each.value.port
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "backend_ingress" {
+  for_each = local.backend_ingress_rules
+
+  security_group_id = aws_security_group.services[each.value.group].id
+  description       = "Allow client requests from backend servers to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
+  cidr_ipv4         = each.value.cidr_ipv4
+  from_port         = each.value.port
+  to_port           = each.value.port
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "chs_ingress" {
+  for_each = local.chs_ingress_rules
+
+  security_group_id = aws_security_group.services[each.value.group].id
+  description       = "Allow client requests from CHS services to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
+  cidr_ipv4         = each.value.cidr_ipv4
+  from_port         = each.value.port
+  to_port           = each.value.port
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ceu_ingress" {
+  for_each = local.ceu_ingress_rules
+
+  security_group_id = aws_security_group.services[each.value.group].id
+  description       = "Allow client requests from Live CEU frontend to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
+  cidr_ipv4         = each.value.cidr_ipv4
+  from_port         = each.value.port
+  to_port           = each.value.port
+  ip_protocol       = "tcp"
+}
+
 resource "aws_security_group" "common" {
   name   = "common-${local.common_resource_name}"
   vpc_id = data.aws_vpc.heritage.id
 
-  ingress {
-    description     = "Allow SSH connectivity for application deployments"
-    from_port       = 22
-    to_port         = 22
-    protocol        = "TCP"
-    prefix_list_ids = [data.aws_ec2_managed_prefix_list.shared_services_management.id]
-  }
-
-  ingress {
-    description = "Allow connectivity from CHIPS for Tuxedo CEU services"
-    from_port   = 38000
-    to_port     = 38000
-    protocol    = "TCP"
-    cidr_blocks = [var.chips_cidr]
-  }
-
-  ingress {
-    description = "Allow connectivity from CHIPS for Tuxedo CHD services"
-    from_port   = 38100
-    to_port     = 38100
-    protocol    = "TCP"
-    cidr_blocks = [var.chips_cidr]
-  }
-
-  ingress {
-    description = "Allow connectivity from CHIPS for Tuxedo EWF services"
-    from_port   = 38200
-    to_port     = 38200
-    protocol    = "TCP"
-    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application[*].cidr_block])
-  }
-
-  ingress {
-    description = "Allow connectivity from CHIPS for Tuxedo XML services"
-    from_port   = 38300
-    to_port     = 38300
-    protocol    = "TCP"
-    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application[*].cidr_block])
-  }
-
-  egress {
-    description = "Allow outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = merge(local.common_tags, {
     Name = "common-${local.common_resource_name}"
   })
+}
+
+resource "aws_vpc_security_group_ingress_rule" "admin_ingress" {
+  security_group_id = aws_security_group.common.id
+  description       = "Allow SSH connectivity for application deployments"
+  prefix_list_id    = data.aws_ec2_managed_prefix_list.shared_services_management.id
+  from_port         = 22
+  to_port           = 22
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "chips_ingress" {
+  for_each = {
+    for rule in local.chips_ingress_rules : "${rule.service}-${rule.port}-${rule.cidr_ipv4}" => rule
+  }
+
+  security_group_id = aws_security_group.common.id
+  description       = "Allow connectivity from CHIPS to Tuxedo ${upper(each.value.service)} services"
+  cidr_ipv4         = each.value.cidr_ipv4
+  from_port         = each.value.port
+  to_port           = each.value.port
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "on_prem_chips_ingress" {
+  for_each = var.tuxedo_domains
+
+  security_group_id = aws_security_group.common.id
+  description       = "Allow connectivity from on-premise CHIPS to Tuxedo ${upper(each.key)} services"
+  cidr_ipv4         = var.chips_cidr
+  from_port         = each.value
+  to_port           = each.value
+  ip_protocol       = "tcp"
+}
+
+# TODO Remove after confirming on-prem frontend connectivity to Tuxedo services no longer required
+resource "aws_vpc_security_group_ingress_rule" "on_prem_frontend_ingress_rules" {
+  for_each = local.on_prem_frontend_ingress_rules
+
+  security_group_id = aws_security_group.services[each.value.group].id
+  description       = "Allow client requests from Live CEU frontend to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
+  cidr_ipv4         = each.value.cidr_ipv4
+  from_port         = each.value.port
+  to_port           = each.value.port
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_egress_rule" "all_egress" {
+  security_group_id = aws_security_group.common.id
+  description       = "Allow all outbound traffic"
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
 }
 
 resource "aws_instance" "frontend" {
