@@ -15,7 +15,7 @@ resource "aws_security_group" "services" {
   name   = "${each.key}-${local.common_resource_name}"
   vpc_id = data.aws_vpc.heritage.id
 
-  ingress = null
+  ingress = []
 
   tags = merge(local.common_tags, {
     Name             = "${each.key}-${local.common_resource_name}"
@@ -28,8 +28,8 @@ resource "aws_security_group" "common" {
   name   = "common-${local.common_resource_name}"
   vpc_id = data.aws_vpc.heritage.id
 
-  ingress = null
-  egress = null
+  ingress = []
+  egress = []
 
   tags = merge(local.common_tags, {
     Name = "common-${local.common_resource_name}"
