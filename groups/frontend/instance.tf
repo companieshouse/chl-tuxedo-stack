@@ -15,78 +15,7 @@ resource "aws_security_group" "services" {
   name   = "${each.key}-${local.common_resource_name}"
   vpc_id = data.aws_vpc.heritage.id
 
-  dynamic "ingress" {
-    for_each = each.value
-    iterator = service
-    content {
-      description = "Allow health check requests from network load balancer to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = formatlist("%s/32", [for eni in data.aws_network_interface.nlb : eni.private_ip])
-    }
-  }
-
-  dynamic "ingress" {
-    for_each = each.value
-    iterator = service
-    content {
-      description = "Allow client requests from frontend web servers to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = data.aws_subnet.web[*].cidr_block
-    }
-  }
-
-  # TODO Remove this; this was added for testing Tuxedo services in live using on-premise frontend services
-  dynamic "ingress" {
-    for_each = var.environment == "live" || var.environment == "staging" ? each.value : {}
-    iterator = service
-    content {
-      description = "Allow client requests from on-premise frontend web servers to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = var.on_premise_frontend_cidrs
-    }
-  }
-
-  dynamic "ingress" {
-    for_each = each.value
-    iterator = service
-    content {
-      description = "Allow client requests from backend servers to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = data.aws_subnet.application[*].cidr_block
-    }
-  }
-
-  dynamic "ingress" {
-    for_each = each.key == "chs" ? each.value : {}
-    iterator = service
-    content {
-      description = "Allow client requests from CHS services to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = local.chs_application_cidrs
-    }
-  }
-
-  dynamic "ingress" {
-    for_each = each.key == "ceu" && var.environment == "live" ? each.value : {}
-    iterator = service
-    content {
-      description = "Allow client requests from Live CEU frontend to ${service.key} service in ${each.key} server group"
-      from_port   = service.value
-      to_port     = service.value
-      protocol    = "TCP"
-      cidr_blocks = local.ceu_live_fe_application_cidrs
-    }
-  }
+  ingress = null
 
   tags = merge(local.common_tags, {
     Name             = "${each.key}-${local.common_resource_name}"
@@ -99,53 +28,8 @@ resource "aws_security_group" "common" {
   name   = "common-${local.common_resource_name}"
   vpc_id = data.aws_vpc.heritage.id
 
-  ingress {
-    description     = "Allow SSH connectivity for application deployments"
-    from_port       = 22
-    to_port         = 22
-    protocol        = "TCP"
-    prefix_list_ids = [data.aws_ec2_managed_prefix_list.shared_services_management.id]
-  }
-
-  ingress {
-    description = "Allow connectivity from CHIPS for Tuxedo CEU services"
-    from_port   = 38000
-    to_port     = 38000
-    protocol    = "TCP"
-    cidr_blocks = [var.chips_cidr]
-  }
-
-  ingress {
-    description = "Allow connectivity from CHIPS for Tuxedo CHD services"
-    from_port   = 38100
-    to_port     = 38100
-    protocol    = "TCP"
-    cidr_blocks = [var.chips_cidr]
-  }
-
-  ingress {
-    description = "Allow connectivity from CHIPS for Tuxedo EWF services"
-    from_port   = 38200
-    to_port     = 38200
-    protocol    = "TCP"
-    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application[*].cidr_block])
-  }
-
-  ingress {
-    description = "Allow connectivity from CHIPS for Tuxedo XML services"
-    from_port   = 38300
-    to_port     = 38300
-    protocol    = "TCP"
-    cidr_blocks = flatten([[var.chips_cidr], data.aws_subnet.application[*].cidr_block])
-  }
-
-  egress {
-    description = "Allow outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  ingress = null
+  egress = null
 
   tags = merge(local.common_tags, {
     Name = "common-${local.common_resource_name}"
