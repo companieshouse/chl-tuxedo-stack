@@ -57,7 +57,7 @@ variable "instance_type" {
 variable "lb_deletion_protection" {
   type        = bool
   description = "A boolean value representing whether to enable load balancer deletion protection"
-  default     = false
+  default     = true
 }
 
 variable "lvm_block_devices" {
