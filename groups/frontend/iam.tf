@@ -1,5 +1,5 @@
 module "instance_profile" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/instance_profile?ref=tags/1.0.326"
+  source = "git@github.com:companieshouse/terraform-modules//aws/instance_profile?ref=tags/1.0.328"
   name   = "${var.service_subtype}-${var.service}-profile"
 
   cw_log_group_arns = flatten([
