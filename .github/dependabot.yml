@@ -4,8 +4,6 @@ updates:
     directory: "/groups/frontend"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "companieshouse/platform-admin"
     registries:
       - github-dependabot
     groups:
