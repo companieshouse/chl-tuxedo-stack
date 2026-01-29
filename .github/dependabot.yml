@@ -4,7 +4,7 @@ updates:
     directory: "/groups/frontend"
     schedule:
       interval: "cron"
-      cronjob: "0 9 1-7 * 1"
+      cronjob: "0 9 * * 1"
     registries:
       - github-dependabot
     groups:
