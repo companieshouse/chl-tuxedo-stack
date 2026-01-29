@@ -3,7 +3,8 @@ updates:
   - package-ecosystem: "terraform"
     directory: "/groups/frontend"
     schedule:
-      interval: "weekly"
+      interval: "cron"
+      cronjob: "0 9 1-7 * 1"
     registries:
       - github-dependabot
     groups:
