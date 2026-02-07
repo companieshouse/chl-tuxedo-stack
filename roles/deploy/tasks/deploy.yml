@@ -222,6 +222,7 @@
   args:
     executable: /bin/bash
   changed_when: true
+  no_log: true
 
 - name: "Start ngSrv services : {{ tuxedo_service }}"
   become: true
