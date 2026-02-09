@@ -163,6 +163,7 @@
     executable: /bin/bash
   register: ubbconfig_lint
   changed_when: false
+  no_log: true
 
 - name: "Assert Tuxedo ubbconfig lint success : {{ tuxedo_service }}"
   ansible.builtin.assert:
