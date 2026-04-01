@@ -28,7 +28,7 @@ variable "chips_cidr" {
 variable "default_log_retention_in_days" {
   type        = number
   description = "The default log retention period in days to be used for CloudWatch log groups."
-  default     = 7
+  default     = 30
 }
 
 variable "dns_zone_suffix" {
