@@ -8,20 +8,4 @@ instance_type = "m5.large"
 
 root_volume_size = 100
 
-tuxedo_user_log_groups = {
-  ceu = [
-    { name = "ULOG", log_retention_in_days: 7 }
-  ]
-  chd = [
-    { name = "ULOG", log_retention_in_days: 7 }
-  ]
-  ewf = [
-    { name = "ULOG", log_retention_in_days: 14 }
-  ]
-  xml = [
-    { name = "ULOG", log_retention_in_days: 7 }
-  ]
-  chs = [
-    { name = "ULOG", log_retention_in_days: 7 }
-  ]
-}
+default_log_retention_in_days = 90
