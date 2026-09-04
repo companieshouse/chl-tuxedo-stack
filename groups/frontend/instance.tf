@@ -20,7 +20,6 @@ resource "aws_security_group" "services" {
   })
 }
 
-
 resource "aws_vpc_security_group_ingress_rule" "frontend_web_ingress" {
   for_each = local.frontend_web_ingress_rules
 
@@ -58,7 +57,7 @@ resource "aws_vpc_security_group_ingress_rule" "ceu_ingress" {
   for_each = local.ceu_ingress_rules
 
   security_group_id = aws_security_group.services[each.value.group].id
-  description       = "Allow client requests from Live CEU frontend to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
+  description       = "Allow client requests from CEU frontend to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
   cidr_ipv4         = each.value.cidr_ipv4
   from_port         = each.value.port
   to_port           = each.value.port
@@ -112,7 +111,7 @@ resource "aws_vpc_security_group_ingress_rule" "on_prem_frontend_ingress_rules" 
   for_each = local.on_prem_frontend_ingress_rules
 
   security_group_id = aws_security_group.services[each.value.group].id
-  description       = "Allow client requests from Live CEU frontend to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
+  description       = "Allow client requests from on-premise frontend web servers to ${upper(each.value.service)} service in ${upper(each.value.group)} server group"
   cidr_ipv4         = each.value.cidr_ipv4
   from_port         = each.value.port
   to_port           = each.value.port
