@@ -96,17 +96,6 @@ resource "aws_vpc_security_group_ingress_rule" "chips_ingress" {
   ip_protocol       = "tcp"
 }
 
-resource "aws_vpc_security_group_ingress_rule" "on_prem_chips_ingress" {
-  for_each = var.tuxedo_domains
-
-  security_group_id = aws_security_group.common.id
-  description       = "Allow connectivity from on-premise CHIPS to Tuxedo ${upper(each.key)} services"
-  cidr_ipv4         = var.chips_cidr
-  from_port         = each.value
-  to_port           = each.value
-  ip_protocol       = "tcp"
-}
-
 # TODO Remove after confirming on-prem frontend connectivity to Tuxedo services no longer required
 resource "aws_vpc_security_group_ingress_rule" "on_prem_frontend_ingress_rules" {
   for_each = local.on_prem_frontend_ingress_rules
